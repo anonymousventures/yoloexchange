@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+ <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+  <meta property="fb:app_id" content="509979635783509" /> 
+  <meta property="og:type"   content="article" /> 
+  <meta property="og:url"    content="http://bitponzi.org" /> 
+  <meta property="og:title"  content="BitPonzi" /> 
+  <meta property="og:description"  content="Make easy 110% return on Bitcoin with provably fair Bitcoin Ponzi Scheme" /> 
+  <meta property="og:image"  content="http://www.fbnstatic.com/static/managed/img/fb2/news/bitcoin.jpg" /> 
+
+<link rel="stylesheet" href="./magnific/dist/magnific-popup.css"> 
+<link rel="stylesheet" href="style2.css"> 
+<!-- jQuery 1.7.2+ or Zepto.js 1.0+ -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+<!-- Magnific Popup core JS file -->
+<script src="magnific/dist/jquery.magnific-popup.js"></script> 
+<!-- Add jQuery library -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+<!-- Add mousewheel plugin (this is optional) -->
+<script type="text/javascript" src="/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+
+<!-- Add fancyBox -->
+<link rel="stylesheet" href="/fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<!-- Optionally add helpers - button, thumbnail and/or media -->
+<link rel="stylesheet" href="/fancybox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.6"></script>
+
+<link rel="stylesheet" href="/fancybox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-49737869-1', 'bitponzi.org');
+  ga('send', 'pageview');
+
+</script>
+
+<script>
+
+
+
+function open_twitter() {
+
+
+  w = 500;
+  h = 500;
+  var left = (screen.width/2)-(w/2);
+  var top = (screen.height/2)-(h/2);
+
+  var url = 'https://twitter.com/share?text=';
+  url += encodeURIComponent('The world\'s first provably fair Ponzi Scheme. (via @Bit_Ponzi) http://bitponzi.org/');
+
+  window.open(url, 'name', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+  //window.open(url,'name','height=400,width=650, top=200, left=200');
+
+} 
+
+
+/*
+function open_twitter(){
+
+var url = 'https://twitter.com/share?text=';
+url += encodeURIComponent('The world\'s first multi-player Bitcoin lottery. (via @Satoshi_Lotto) http://localhost:8080/');
+
+var w = window.innerWidth;
+var h = window.innerHeight;
+  window.open(url,'name','height=400,width=650, top=200, left=200');
+}
+*/
+
+
+function isEven(n) 
+{
+   return isNumber(n) && (n % 2 == 0);
+}
+
+function isOdd(n)
+{
+   return isNumber(n) && (Math.abs(n) % 2 == 1);
+}
+
+$( document ).ready(function() {
+
+$('#play').click(function(){
+//alert('hello');
+finished = localStorage.getItem("finished");
+if (finished == true || finished == 'true'){
+document.getElementById('process_ticket_iframe').contentWindow.location.reload();
+localStorage.setItem("finished", false);
+finished = localStorage.getItem("finished");
+//alert(finished);
+}
+//alert(finished); 
+
+});
+
+
+add_table_data();
+add_jackpot_data();
+
+function add_jackpot_data(){
+//alert('hi');
+/*
+<div id="jackpot_amount">
+฿36 ( $18,234 )
+</div>
+
+jackpot_amount */
+jackpot_amount = {{{jackpot_amount}}};
+//alert(JSON.stringify(jackpot_amount));
+bitcoin_truncated = jackpot_amount.bitcoin.toString().substr(0,jackpot_amount.bitcoin.toString().indexOf('.')+3);
+dollar_total = (jackpot_amount.dollar * jackpot_amount.bitcoin).toString();
+dollar_total = (dollar_total).substr(0, dollar_total.indexOf('.') + 3);
+
+//alert(jackpot_amount);
+str = '฿' + bitcoin_truncated + ' ($' + dollar_total  + ')';
+$('#jackpot_amount').html(str);
+
+
+}
+
+
+
+function add_table_data(){
+bets = {{{bets}}};
+
+str = '';
+
+$.each(bets, function(key,data){
+
+    txid = data.txin;
+    txid_short = txid.substr(0,6);
+
+    //alert(txid_short);
+    ticket_purchase_time = data.ticket_purchase_time;
+
+    now = ticket_purchase_time.toString();
+    //now = now.substr(0, now.length-3);
+    array = moment.unix(now).toArray();
+    var hi = moment.utc(array);
+    hi = hi.toString();
+    index = hi.indexOf('GM');
+    hi = hi.substr(0, index);
+    ticket_purchase_time = hi;
+
+
+
+
+
+    number_tickets = data.number_tickets;
+    amount = '฿' + data.amount.toString().substr(0,6);
+
+
+    if (data.paid == 'true' || data.paid == true){
+    if (data.txout != null && data.txout != undefined){
+    txout = data.txout;
+    txout_short = txout.substr(0,6);
+    sent_back = (data.amount * 1.1).toString().substr(0,6);
+
+    amount =  amount +  '  <a target="_blank" class="transaction_link" href="https://blockchain.info/tx/'  + txout + '">' + '(Earned ฿' + sent_back + '!)</a>';
+    }
+    }
+
+//alert(key);
+
+if ( key % 2 == 0 ){
+  
+    str += '<div class="row bet_result_a">';
+    str += '<div class="col-xs-4 col-sm-4"><a target="_blank" class="transaction_link" href="https://blockchain.info/tx/'  + txid + '">'  + txid_short + '</a></div>';
+    str += '<div class="col-xs-4 col-sm-4">' + ticket_purchase_time + '</div>';
+    str += '<div class="col-xs-4 col-sm-4">' + amount + '</div>';
+    str += '</div>';
+    //alert('hi');
+}
+else{
+  
+    str += '<div class="row bet_result_b">';
+    str += '<div class="col-xs-4 col-sm-4"><a target="_blank" class="transaction_link" href="https://blockchain.info/tx/'  + txid + '">'  + txid_short + '</a></div>';
+    str += '<div class="col-xs-4 col-sm-4">' + ticket_purchase_time + '</div>';
+    str += '<div class="col-xs-4 col-sm-4">' + amount + '</div>';
+    str += '</div>';
+    //alert('hi');
+}
+
+
+});
+
+//alert(str);
+
+$('#bet_table').append(str); 
+
+}
+
+  if (document.URL.indexOf('org') != -1)
+      root = window.location.host;
+  else 
+      root = 'http://localhost:8000';
+
+
+  var socket = io.connect(root);
+
+  type = 'a';
+
+  socket.on('update_table', function (data) {
+    //alert('fucked');
+
+    rows = $("#bet_table").children().length;
+    if (rows > 19){
+    $( "#bet_table" ).children().last().remove();
+
+    }
+    //if ($('#bet_table'))
+
+    //alert(JSON.stringify(data));
+    data = data['ticket_info'];
+
+    txid = data.txin;
+    txid_short = txid.substr(0,6);
+
+    //alert(txid_short);
+    ticket_purchase_time = data.ticket_purchase_time;
+    now = ticket_purchase_time.toString();
+    //now = now.substr(0, now.length-3);
+    array = moment.unix(now).toArray();
+    var hi = moment.utc(array);
+    hi = hi.toString();
+    index = hi.indexOf('GM');
+    hi = hi.substr(0, index);
+    ticket_purchase_time = hi;
+
+
+
+    number_tickets = data.number_tickets;
+    amount = '฿' + data.amount.toString().substr(0,6);
+
+
+    if (data.paid == 'true' || data.paid == true){
+    if (data.txout != null && data.txout != undefined){
+    txout = data.txout;
+    txout_short = txout.substr(0,6);
+    sent_back = (data.amount * 1.1).toString().substr(0,6);
+
+    amount =  amount.toString().substr(0,6) +  '  <a target="_blank" class="transaction_link" href="https://blockchain.info/tx/'  + txout + '">' + '(Earned ฿' + sent_back + '!)</a>';
+    }
+    }
+
+
+  if (type == 'a'){
+      str = '<div class="row bet_result_b invalid">';
+      str += '<div class="col-xs-4 col-sm-4"><a target="_blank" class="transaction_link" href="https://blockchain.info/tx/'  + txid + '">'  + txid_short + '</a></div>';
+      str += '<div class="col-xs-4 col-sm-4">' + ticket_purchase_time + '</div>';
+      str += '<div class="col-xs-4 col-sm-4">' + amount + '</div>';
+      str += '</div>';
+      type = 'b';
+    }
+  else{
+      str = '<div class="row bet_result_a invalid">';
+      str += '<div class="col-xs-4 col-sm-4"><a target="_blank" class="transaction_link" href="https://blockchain.info/tx/'  + txid + '">'  + txid_short + '</a></div>';
+      str += '<div class="col-xs-4 col-sm-4">' + ticket_purchase_time + '</div>';
+      str += '<div class="col-xs-4 col-sm-4">' + amount + '</div>';
+      str += '</div>';
+      type = 'a';
+  }
+
+
+    $('#bet_table').prepend(str); 
+    //socket.emit('my other event', { my: 'data' });
+  });
+
+
+
+
+
+
+  socket.on('fuck', function(fuck){
+    //alert('wtf');
+    //$('#bet_table').append(JSON.stringify(fuck));
+  });
+
+
+/*
+  socket.on('news', function(fuck){
+    //alert(fuck);
+    $('#bet_table').append(JSON.stringify(fuck));
+
+  }); */
+
+});
+
+</script>
+
+
+</head>
+<body>
+
+
+</body>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+var str = 'https://twitter.com/share?text=';
+str += encodeURIComponent('The world\'s first provably fair Ponzi Scheme. (via @Bit_Ponzi) http://bitponzi.org/');
+//alert(str);
+$("#tweet").attr('href', str); 
+
+</script>
+
+</html>

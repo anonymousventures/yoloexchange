@@ -1,0 +1,24 @@
+<script>
+var date = new Date(parseInt("77771564221", 10));
+var result = new Array();
+result[0] = $.datepicker.formatDate('DD, M, d, yy', date);
+result[1] = ' ';
+if (date.getHours() > 12) {
+    result[2] = date.getHours() - 12;
+} else if (date.getHours() == 0 ) {
+    result[2] = "12";
+} else {
+    result[2] = date.getHours();
+}
+result[3] = ":"
+result[4] = date.getMinutes();
+
+if (date.getHours() > 12) {
+    result[5] = " pm";
+} else {
+    result[5] = " am";
+}
+
+alert(result.join(''));
+console.log(result.join(''));
+</script>

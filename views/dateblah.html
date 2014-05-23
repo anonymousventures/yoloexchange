@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+
+<script>
+$( document ).ready(function() {
+    //var day = moment.unix(1318781876);
+    now = $.now();
+    now = now.toString();
+    now = now.substr(0, now.length-3);
+    array = moment.unix(now).toArray();
+    var hi = moment.utc(array);
+    hi = hi.toString();
+    index = hi.indexOf('GM');
+    hi = hi.substr(0, index -4);
+    alert(hi);
+});
+
+</script>
+</head>
+</html>

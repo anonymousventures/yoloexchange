@@ -1,0 +1,58 @@
+<html>
+<head>
+
+</head>
+<body>
+   <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '509979635783509',
+          status     : true,
+          xfbml      : true
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/all.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+
+
+<script type="text/javascript">
+
+
+
+/*
+  FB.init({
+    appId      : 509979635783509,
+    status     : true,
+    xfbml      : true
+  }); */
+
+function shit(){
+
+FB.ui({
+    method: 'feed',
+    name: 'Facebook Dialogs',
+    link: 'http://localhost:8080/info',
+    picture: 'http://localhost:8080/img/share_on_facebook.png',
+    caption: 'Reference Documentation',
+    description: 'Dialogs provide a simple, consistent interface for applications to interface with users.'
+}, function(response){});
+}
+
+
+
+
+</script>
+<img src="./img/share_on_facebook.png"  onclick="shit()"></img>
+<a id="test"  onclick="shit()">testing </a>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "helloExpress",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "nodemon dogeponzi2.js",
+    "debug": "node --debug dogeponzi.js"
+  }
+}

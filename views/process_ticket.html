@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Title of the document</title>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<link rel="stylesheet" href="style2.css"> 
+</head>
+
+<body>
+<script>
+
+$(document).ready(function() {
+//alert('testing');
+  
+  /*
+  finished = localStorage.getItem("finished");
+  alert(finished);
+  if (finished == true){
+  document.getElementById('process_ticket_iframe').contentWindow.location.reload();
+  localStorage.setItem("finished", false);
+  } */
+
+  var player_address;
+  var ticket_purchase_time
+  var number_tickets;
+  var amount;
+  var bet_address;
+  var txin;
+
+
+  if (document.URL.indexOf('org') != -1)
+      root = window.location.host;
+  else 
+      root = 'http://localhost';
+
+	
+  var socket = io.connect(root);
+  socket.on('new_ticket_purchase', function (data) {
+  ticket_info = data['ticket_info'];
+
+  stored_bet_address = localStorage.getItem("bet_address");
+
+  //alert('outside');
+  //alert('stored ' + stored_bet_address);
+  //alert('sent ' + ticket_info['bet_address']);
+
+  //if (ticket_info['bet_address'] == stored_bet_address){
+  //alert(JSON.stringify(data));
+  txin = ticket_info.txin;
+  player_address = ticket_info.player_address;
+  ticket_purchase_time = ticket_info.ticket_purchase_time;
+  number_tickets = ticket_info.number_tickets;
+  amount = ticket_info.amount;
+  bet_address = ticket_info.bet_address;
+  tickets_left = number_tickets;
+  count = 1;
+
+if (tickets_left == 1){
+//alert(number_tickets);
+string = 'You purchased ' + number_tickets + ' lottery ticket for ฿' + amount  + 
+        '.<br> Please select 5 Lucky Numbers below: ';
+
+$('#modal_wrapper').html(string);
+$('#modal_wrapper').append('<div id="pick_numbers"></div>');
+$('#pick_numbers').append('<div id="checkbox_numbers" ></div><div style="margin-left: 0px; margin-top: 5px;">Your lucky numbers are: </div><input type="text" id="lucky_numbers" style="width: 300px" class="form-control"\ placeholder="Lucky numbers">\
+<button type="button" id="lotto_submit" class="btn btn-primary">Submit Lottery Ticket</button>');
+}
+else{
+
+
+//alert(number_tickets);
+  string = 'You purchased ' + number_tickets + ' lottery ticket for ฿' + amount  + 
+        '. You have ' + tickets_left + ' lottery tickets remaining. <br> Please select 5 Lucky Numbers below: ';
+
+$('#modal_wrapper').html(string);
+$('#modal_wrapper').append('<div id="pick_numbers"></div>');
+$('#pick_numbers').append('<div id="checkbox_numbers" ></div><div style="margin-left: 0px; margin-top: 5px;">Your lucky numbers are: </div><input type="text" id="lucky_numbers" style="width: 300px"  class="form-control"\ placeholder="Lucky numbers">\
+<br>\
+<button type="button" id="save_numbers" class="btn btn-primary">Submit Lottery Ticket # ' + count + '</button>');
+
+}
+
+process_pick_numbers();
+  //}
+
+
+  });
+  
+
+
+function get_new_address(fn){
+
+email_address = localStorage.getItem("email_address");
+
+$.ajax({
+  url: "/get_new_address",
+  type: "POST",
+  data: {email_address: email_address},
+  dataType: "html"
+}).done(function(data){
+
+address = data;
+
+fn(address);
+
+//alert(address);
+//alert(address);
+
+});
+
+}
+
+function setcheckbox(){
+//alert('hi');
+//alert(number);
+
+}
+
+
+$('#next_firstb').click(function(){
+get_new_address(function(address){
+
+
+localStorage.setItem("bet_address", address );
+email_address = $('#email_inquiry').val();
+localStorage.setItem("email_address", email_address);
+
+ticket_count = parseInt($('#ticket_quantity').val());
+bitcoin_amount = ticket_count * .01
+
+//alert(bitcoin_amount);
+
+string  = 'To purchase ' + ticket_count + ' tickets, send B⃦' + bitcoin_amount + ' to ' + address + '<br> ( Please wait 10 seconds after sending to process )';
+
+
+$('#modal_wrapper').html(string);
+
+
+
+
+});
+
+});
+
+
+
+
+function process_pick_numbers(){
+
+checkbox_string ='';
+for (var i=1; i<50; i++){
+
+if (i<10){
+if (i%7 == 1)
+str = '<br><input type="checkbox" class="check" name="1" value="' + i + '" > 0' + i + ' ';
+else	
+str = '<input type="checkbox" name="1"   class="check"  value="' + i + '" > 0' + i + ' ';
+
+}
+else{
+
+if (i%7 == 1)
+str = '<br><input type="checkbox" class="check"  name="1" value="' + i + '"> ' + i + ' ';
+else	
+str = '<input type="checkbox" class="check"  name="1" value="' + i + '"> ' + i + ' ';
+}
+checkbox_string += str;
+}
+
+$('#checkbox_numbers').html(checkbox_string)
+
+$('#lucky_numbers').prop('disabled', true);
+
+
+
+
+ $('#save_numbers').bind('click', function(){
+
+
+    all_tickets = new Array();
+
+    previous_string = $('#lucky_numbers').val();
+
+    number_array = previous_string.split(',');
+    $.each(number_array, function(key,val){
+      number_array[key] = val.trim();
+    });
+
+    all_tickets.push(number_array);
+
+  player_address = ticket_info.player_address;
+  ticket_purchase_time = ticket_info.ticket_purchase_time;
+  number_tickets = ticket_info.number_tickets;
+  amount = ticket_info.amount;
+  bet_address = ticket_info.bet_address;
+  email_address = localStorage.getItem("email_address");
+
+  var final_ticket;
+  if (tickets_left == 1)
+    final_ticket = true;
+  else
+    final_ticket = false;
+
+    //alert('test');
+    $.ajax({
+      url: "/submit_lucky_numbers",
+      type: "POST",
+      data: {txin: txin, 
+          lucky_numbers: all_tickets, 
+          player_address: player_address, 
+          ticket_purchase_time: ticket_purchase_time,
+          number_tickets: number_tickets,
+          amount: amount,
+          bet_address: bet_address,
+          email_address: email_address,
+          final_ticket: final_ticket},
+      dataType: "html"
+    }).done(function(data){
+
+    //alert('submitted shit');
+
+    count++;
+    tickets_left--;
+    //alert('tickets_left ' + tickets_left);
+if (tickets_left >= 1){
+  //alert('inside');
+  string = 'You purchased ' + number_tickets + ' lottery ticket for ฿' + amount  + 
+        '. You have ' + tickets_left +' lottery tickets remaining. <br> Please select 5 Lucky Numbers below: ';
+$('#modal_wrapper').html(string);
+$('#modal_wrapper').append('<div id="pick_numbers"></div>');
+$('#pick_numbers').append('<div id="checkbox_numbers" ></div><div style="margin-left: 0px; margin-top: 5px;">Your lucky numbers are: </div><input type="text" id="lucky_numbers" style="width: 300px" class="form-control"\ placeholder="Lucky numbers">\
+<br>\
+<button type="button" id="save_numbers" class="btn btn-primary">Submit Lottery Ticket # ' + count + '</button>');
+
+process_pick_numbers();
+}
+else{
+
+    string = 'You have succesfully entered your lottery ticket! Stay tuned for the drawing on Tuesday 7pm Pacific Time. We will email you if you win! '
+    $('#modal_wrapper').html(string);
+
+    window.localStorage.setItem("finished", true);
+
+}
+
+    });   
+
+
+
+ });
+
+ $('#lotto_submit').bind('click', function(){
+
+    window.localStorage.setItem("finished", true);
+    //alert(localStorage.getItem("finished"));
+
+    all_tickets = new Array();
+
+	  previous_string = $('#lucky_numbers').val();
+
+	  number_array = previous_string.split(',');
+	  $.each(number_array, function(key,val){
+	  	number_array[key] = val.trim();
+	  });
+
+	  all_tickets.push(number_array);
+
+  player_address = ticket_info.player_address;
+  ticket_purchase_time = ticket_info.ticket_purchase_time;
+  number_tickets = ticket_info.number_tickets;
+  amount = ticket_info.amount;
+  bet_address = ticket_info.bet_address;
+  email_address = localStorage.getItem("email_address");
+
+
+	  //alert('test');
+		$.ajax({
+		  url: "/submit_lucky_numbers",
+		  type: "POST",
+		  data: {txin: txin, 
+		  		lucky_numbers: all_tickets, 
+		  		player_address: player_address, 
+		  		ticket_purchase_time: ticket_purchase_time,
+		  		number_tickets: number_tickets,
+		  		amount: amount,
+		  		bet_address: bet_address,
+          email_address: email_address,
+          final_ticket: true},
+		  dataType: "html"
+		}).done(function(data){
+
+		//alert('submitted shit');
+
+		string = 'You have succesfully entered your lottery ticket! Stay tuned for the drawing on Tuesday 7pm Pacific Time. We will email you if you win! '
+ 		$('#modal_wrapper').html(string);
+
+		});	  
+
+ });	
+
+
+
+
+ $('.check').bind('click',function(){
+  //alert('hello');
+
+
+  string = '';
+  var number = $(this).attr('value');
+  //alert(number);
+  previous_string = $('#lucky_numbers').val();
+
+  number_array = previous_string.split(',');
+  $.each(number_array, function(key,val){
+  	number_array[key] = val.trim();
+  });
+
+  index = $.inArray(number, number_array);
+  if ( index != -1){
+  
+	number_array = jQuery.grep(number_array, function(value) {
+  	return value != number;
+	});
+
+	$.each(number_array, function(key,val){
+	if (key == 0)
+		string += val;
+	else
+		string += ' , ' + val;
+
+	});
+	
+	$('#lucky_numbers').val(string);
+
+  }
+
+  else{
+
+  if (previous_string.trim() == '')
+  string = number;
+  else	
+  string = previous_string + ' , ' + number; 
+
+	}
+
+  $('#lucky_numbers').val(string);
+
+
+
+
+ });
+
+}
+
+
+
+
+
+
+
+
+});
+
+</script>
+
+
+<!--
+
+Please select 5 lucky numbers
+<div id="checkbox_numbers" >
+</div>
+<br>
+
+<div style="margin-left: 0px">Your lucky numbers are: </div><input type="text" id="lucky_numbers" class="col-xs-3" class="form-control" placeholder="Lucky numbers">
+<br style="line-height: 2.3 !important">
+<button type="button"  class="btn btn-primary">Submit Lottery Ticket</button>
+
+-->
+
+
+<div id="modal_wrapper">
+
+<div class="form-group has-success" style="margin-bottom: 3px !important">
+  <label class="control-label" id="ticket_inquiry" for="inputSuccess1">How many tickets would you like to purchase? (each ticket is .01 BTC) </label>
+    <input type="text" class="form-control" style="width: 50px"  id="ticket_quantity">
+
+  <label class="control-label" id="ask_email" for="inputSuccess1">What is your email address? (We will email you if you win any prizes!)</label>
+  <input type="text" class="form-control" style="width: 250px"  id="email_inquiry">
+
+</div>
+   <button id="next_firstb" type="button" class="btn btn-primary">Next</button>
+   <div id="modaltest"> </div>
+</div>
+
+</body>
+
+</html>

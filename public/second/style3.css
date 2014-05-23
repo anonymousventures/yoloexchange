@@ -1,0 +1,210 @@
+@import url('//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css');
+.container {
+    margin-top: 10px;
+}
+
+
+body {
+
+  /*background: url('../img/dogebackground.jpg') no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; */
+
+}
+
+#brandname{
+margin-left: 30px;
+
+}
+
+#login{
+margin-right: 30px;
+}
+
+#pushed_container{
+  margin-top: 50px;
+}
+
+.center{
+  margin: 0 auto;
+  text-align: center;
+
+}
+
+#balances{
+  margin-top: 70px;
+  margin-left: 30px;
+  margin-right: 30px;
+
+}
+
+#register_title{
+margin-top: 70px;
+font-size: 40px;
+font-style: bold;
+
+}
+
+#register_table{
+width: 500px;
+text-align: center;
+margin-left: auto;
+margin-right: auto;
+margin-top: 30px;
+}
+
+.register_input{
+  width: 280px !important;
+  line-height: 10px !important;
+}
+
+#register_button{
+  margin-top: 20px;
+}
+
+#tab_table{
+width: 100%;
+text-align: center;
+margin-left: auto;
+margin-right: auto;
+margin-top: 30px;
+}
+
+
+#details{
+margin-top: 10px; 
+font-size: 18px;
+
+}
+
+.left_table{
+  text-align: right !important;
+  padding-right: 30px !important;
+  width: 200px;
+
+}
+
+#terms_checkbox{
+  
+  margin-right: 5px; !important;
+
+}
+
+.tab_header{
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+.tab_header_modified{
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.tab_description{
+  margin-top: 20px;
+}
+
+.bottom_tab_description{
+  
+}
+
+#nav_tabs{
+
+
+}
+
+#tab_row{
+  height: 60px;
+  line-height: 60px;
+}
+
+
+.tab_td{
+  height:50px !important;
+  line-height: 50px !important;
+
+}
+
+#deposited_amount{
+  font-weight: bold;
+}
+
+.box
+{
+box-sizing:border-box;
+-moz-box-sizing:border-box; /* Firefox */
+margin: 0 0 15px;
+border:1px solid #efbd98;
+background: #fdf6ea;
+padding: 12px 15px;
+}
+
+.box_green
+{
+box-sizing:border-box;
+-moz-box-sizing:border-box; /* Firefox */
+margin: 0 0 15px;
+border:1px solid #8ddf79;
+background: #f0fbeb;
+padding: 12px 15px;
+}
+
+
+#withdraw_available_balance{
+  margin-top: 10px;
+}
+
+#error_message{
+  margin-top: 10px;
+  margin-bottom:10px;
+  color: red;
+
+}
+
+#withdraw_success{
+  margin: 0 auto;
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+
+}
+
+#withdraw_success_caption{
+  margin: 0 auto;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+
+}
+
+.expander{
+  background-position: -23px 25px;
+  background-image: url(img/expand-sprite.gif);
+  background-repeat: no-repeat;
+  cursor: pointer;
+  
+}
+
+.expander.clicked{
+  background-position: -45px 25px;
+  background-image: url(img/expand-sprite.gif);
+  background-repeat: no-repeat;
+  cursor: pointer;
+
+}
+
+.clickable_td {
+
+}
+
+.left_td{
+  text-align: left;
+}
+
+.inner_td{
+  padding-left: 5px
+}
+

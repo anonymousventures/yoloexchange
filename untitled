@@ -1,0 +1,309 @@
+app.post('/ask', function(req,res){
+
+
+if (req.session.processing_sell == undefined)
+    req.session.processing_sell = false;
+
+if (req.session.processing_sell == false){
+req.session.processing_sell = true;
+
+ask_quantity = req.body.ask_quantity;
+ask_price = req.body.ask_price;
+
+coin_one_name = req.body.coin_name_one;
+coin_two_name = req.body.coin_name_two;
+coin_one_ticker = req.body.coin_ticker_one
+coin_two_ticker = req.body.coin_ticker_two;
+
+console.log('coinone' + coin_one_name);
+
+console.log('coin one ticker ' + coin_one_ticker);
+console.log(coin_two_ticker);
+//coin_one_ticker = 'doge';
+//coin_two_ticker = 'btc';
+//price = 100;
+
+Order.find({$and: [{coin_one_ticker: coin_one_ticker}, {coin_two_ticker: coin_two_ticker}, {side: 'buy'}, {pending: 'pending'}, {price: {$gte: ask_price}}]}).populate('user').sort({time: 1}).exec(function(err, bid){
+
+//console.log('sell ordera ' + sell_order);
+//console.log('sell orderb ' + sell_order['user']);
+//coin_name_one = coin_one_ticker + 'coin';
+
+//gets info for user that submitted the post request, and info on the relevant coins he owns
+User.findOne({email: req.session.user.email}).populate(coin_one_name + ' ' + coin_two_name).exec(function (err, coin) {
+
+console.log('dacoin ' + coin);
+
+//Coin.findOne({code: coin_one_ticker}, function(err, coin){
+min_order = .00001;
+
+balance = coin[coin_one_name].balance;
+ask_value = ask_price * ask_quantity;
+
+console.log('bid ' + ask_price);
+console.log('quantity ' + ask_quantity);
+console.log('dabalance ' + balance);
+console.log('buyvalue ' + ask_value);
+
+
+if (balance >= ask_value){
+
+if (bid.length == 0 && ask_quantity > min_order){
+
+console.log("it is in here lol");
+
+User.findOne({email: req.session.user.email}, function(err, user){
+
+order = new Order({
+                time: new Date().getTime(),
+                coin_one_ticker: coin_one_ticker,
+                coin_two_ticker: coin_two_ticker,
+                side: 'ask',
+                price: ask_price,
+                quantity: ask_quantity,
+                quantity_left: ask_quantity,
+                user: user
+});
+
+user.orders.push(order);
+coin.orders.push(order);
+
+user.save(function(err){
+
+});
+coin.save(function(err){
+
+});
+
+order.save(function(err){
+
+console.log('order saved');
+
+});
+
+});
+
+}
+else{
+
+console.log(coin_one_name);
+console.log('coinfucker '  + coin);
+console.log('fucker ' + coin[coin_two_name].balance);
+
+
+
+ask_value_left = ask_value;
+ask_quantity_left = ask_quantity;
+
+console.log('ask quantity lefta ' + ask_quantity_left);
+
+complete = false;
+
+total = 0;
+
+
+
+$.each(bid, function(key,val){
+bid_value = val.price * val.quantity_left;
+bid_order_id = val._id;
+bid_price = val.price;
+bid_quantity_left = val.quantity_left;
+
+if (!complete ){
+    if (bid_quantity_left >= ask_quantity_left){
+        quantity_left = bid_quantity_left - ask_quantity_left;
+
+        //update bid order
+
+        if (bid_quantity_left == ask_quantity_left)
+            Order.findByIdAndUpdate(bid_order_id, {$set: {quantity_left: quantity_left, pending: 'complete'}}, function(err, order){
+
+            });
+        else
+            Order.findByIdAndUpdate(bid_order_id, {$set: {quantity_left: quantity_left}}, function(err, order){
+
+            });
+
+        //create ask order record and update balance
+        User.findOne({email: req.session.user.email}).populate(coin_one_name + ' ' + coin_two_name).exec(function(err, user){
+
+        //buy_quantity_left = buy_value_left / buy_price;
+
+
+        //update askers balance
+        sell_price = bid_quantity_left * bid_price;
+
+        //console.log('sell quantity left ' + key + ' ' + ask_quantity_left);
+        //console.log('sell price ' + key + ' ' + sell_price);
+
+        user[coin_one_name].update({$inc: {balance: -1 * ask_quantity_left}}, { w: 1 }, callback);
+        user[coin_two_name].update({$inc: {balance: sell_price}}, { w: 1 }, callback);
+
+        function callback(){}
+        //done updating buyer balance
+
+        order = new Order({
+                        time: new Date().getTime(),
+                        coin_one_ticker: coin_one_ticker,
+                        coin_two_ticker: coin_two_ticker,
+                        side: 'sell',
+                        price: ask_price,
+                        quantity: ask_quantity,
+                        quantity_left: 0,
+                        user: user,
+                        pending: 'complete'
+        });
+
+        user.orders.push(order);
+        coin.orders.push(order);
+
+        user.save(function(err){
+
+        });
+        coin.save(function(err){
+
+        });
+
+        order.save(function(err){
+
+        console.log('order saved');
+
+        });
+
+        });
+
+        //update balance on buyer
+
+        //console.log('sell order user ' + sell_order);
+        User.findById(val['user']).populate(coin_one_name + ' ' + coin_two_name).exec(function(err, buyer){
+            console.log('dabuy ' + buyer);
+            //console.log('buy quantity left ' + bid_quantity_left);
+            //console.log('buy value left ' + ask_value_left);
+
+            buyer[coin_one_name].update({$inc: {balance: ask_quantity_left}}, { w: 1 }, function(err){
+
+                buy_price = ask_quantity_left * bid_price;
+                buyer[coin_two_name].update({$inc: {balance: buy_price}}, { w: 1 }, function(err){
+                    req.session.processing_sell = false;
+                });
+
+            });
+
+
+
+        });
+
+
+        complete = true;
+    }
+    else{
+        //if bid quantity is less than the ask quantity
+        console.log('shit is in elseb');
+
+        //quantity_left = (sell_value - buy_value_left)/sell_price;
+        //update bid order
+        ask_quantity_left -= bid_quantity_left;
+        sell_price = bid_quantity_left * bid_price;
+
+        Order.findByIdAndUpdate(bid_order_id, {$set: {quantity_left: 0, pending: 'complete'}}, function(err, order){
+
+        });
+
+        //update balance for user that submitted ask order
+        User.findOne({email: req.session.user.email}).populate(coin_one_name + ' ' + coin_two_name).exec(function(err, user){
+
+        function callback(){}
+
+        //console.log('sell quantity left ' + key + ' ' + ask_quantity_left);
+        //console.log('sell value ' + key + ' ' + ask_value);
+
+
+        //update asker's balance
+        user[coin_one_name].update({$inc: {balance: -1 * bid_quantity_left}}, { w: 1 }, callback);
+        user[coin_two_name].update({$inc: {balance: sell_price}}, { w: 1 }, callback);
+        //done updating  asker's balance
+
+        //create ask order after processing last bid
+        if (key == bid.length -1 ){
+
+
+            order = new Order({
+                    time: new Date().getTime(),
+                    coin_one_ticker: coin_one_ticker,
+                    coin_two_ticker: coin_two_ticker,
+                    side: 'ask',
+                    price: ask_price,
+                    quanitity: ask_quantity,
+                    quantity_left: ask_quantity_left,
+                    user: user,
+                    pending: 'pending'
+            });
+
+            user.orders.push(order);
+            coin.orders.push(order);
+
+            user.save(function(err){
+
+            });
+            coin.save(function(err){
+
+            });
+
+            order.save(function(err){
+
+            console.log('order saved');
+
+            });
+
+
+        }
+
+
+
+        });
+
+        //update balance on bidder
+        User.findById(val['user']).populate(coin_one_name + ' ' + coin_two_name).exec(function(err, buyer){
+            buyer[coin_one_name].update({$inc: {balance: ask_quantity_left}}, { w: 1 }, function(err){
+
+                //sell_price = bid_quantity_left * bid_price;
+                buyer[coin_two_name].update({$inc: {balance: -1 * sell_price}}, { w: 1 }, function(err){
+                    req.session.processing_sell = false;
+                });
+
+            });
+
+
+        });
+
+
+    }
+
+
+
+
+
+}
+
+
+});
+
+
+
+}
+
+
+
+
+}
+});
+
+
+});
+
+}
+
+
+
+
+});

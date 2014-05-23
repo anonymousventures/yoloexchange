@@ -1,0 +1,309 @@
+@import url('//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css');
+.container {
+    margin-top: 10px;
+}
+
+
+body {
+
+  /*background: url('../img/dogebackground.jpg') no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; */
+
+}
+
+.lotto_box{
+
+padding-top: 25px;
+padding-bottom: 5px;
+padding-left: 15px;
+padding-right: 15px;
+background:#2C3539rgba(255,255,255,0.5);
+background-color: #eee;
+margin-left: auto;
+margin-right: auto;
+margin-top: 10px;
+margin-bottom: 15px;
+vertical-align: center;
+text-align: center;
+width: 70%;
+height: 720px;
+border-radius: 10px;
+
+
+
+}
+
+#top_share_wrapper{
+padding-top: 5px;
+//padding-left: 15px;
+padding-right: 15px;
+margin-left: auto;
+margin-right: auto;
+margin-top: 20px;
+width: 70%;
+
+}
+
+#top_share_wrapper img{
+width:170px; /* you can use % */
+height: auto;
+
+}
+
+#bottom_share_wrapper img{
+width:170px; /* you can use % */
+height: auto;
+margin-top: 10px;
+}
+
+#bottom_share_wrapper{
+//padding-left: 15px;
+padding-right: 15px;
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+margin-bottom: 180px;
+
+}
+
+
+
+
+#lotto_box_content{
+font-size: 30px;
+}
+
+#lotto_slogan{
+font-size: 20px;	
+font-style: italic;
+color: #2C3539;
+}
+#current_jackpot{
+margin-top: 10px;
+font-size: 17px;
+
+
+}
+
+#jackpot_amount{
+font-size: 40px;
+
+
+}
+#address{
+border-radius: 10px;
+background-color: white;
+width: 80%;
+margin-top: 5px;
+margin-left: auto;
+margin-right: auto;
+height: 25px;
+line-height: 25px;
+font-size: 16px;
+}
+#how_to_play{
+margin-top: 15px;
+}
+
+
+
+#bets{
+
+padding-top: 35px;
+padding-bottom: 35px;
+padding-left: 15px;
+padding-right: 15px;
+background:#2C3539rgba(255,255,255,0.5);
+background-color: #eee;
+margin: 10px auto;
+vertical-align: center;
+text-align: center;
+width: 60%;
+height: 300px;
+border-radius: 10px;
+
+
+}
+
+.part{
+text-align: left;
+padding-right: 15px;
+padding-left: 15px;
+
+
+}
+
+#bets_header{
+text-align: center;
+background-color: #464a5e;
+margin-top: 15px;
+color: white;
+font-size: 17px;
+
+
+}
+
+.bet_result_a{
+text-align: center;
+color: #464a5e;
+font-size: 14px;
+background-color: #ABADB6;
+line-height: 20px;
+height: 20px;
+
+
+
+}
+.bet_result_b{
+text-align: center;
+color: #464a5e;
+font-size: 14px;
+background-color: #eee;
+line-height: 20px;
+height: 20px;
+
+
+
+}
+
+#bet_table{
+height: 300px;	
+}
+
+#fancybox_box{
+width: 600px;
+//height: 500px;
+
+}
+
+.explanation_header{
+font-size: 30px;
+}
+
+.here{
+color: blue;
+display: inline !important;
+font-style: underline;
+}
+
+#how_to_play{
+font-size: 25px;
+margin-top: 10px;
+margin-left: 10px;
+color: #464a5e;
+text-decoration: underline;
+
+}
+
+#description{
+font-size: 16px;
+margin-top: 10px;
+margin-left: 10px;
+color: #464a5e;
+font-style: italic;
+
+}
+
+#description_round_background{
+font-size: 16px;
+margin-top: 10px;
+margin-left: 10px;
+color: #464a5e;
+font-style: italic;
+
+}
+
+
+#fb_share{
+margin-top: 5px;
+margin-left: 10px;
+}
+
+#tweet{
+margin-top: -2px;	
+}
+
+
+
+@-webkit-keyframes invalid {
+  from { background-color: green; }
+  to { background-color: inherit; }
+}
+@-moz-keyframes invalid {
+  from { background-color: green; }
+  to { background-color: inherit; }
+}
+@-o-keyframes invalid {
+  from { background-color: green; }
+  to { background-color: inherit; }
+}
+@keyframes invalid {
+  from { background-color: green; }
+  to { background-color: inherit; }
+}
+.invalid {
+  -webkit-animation: invalid 1s ease-in-out; /* Safari 4+ */
+  -moz-animation:    invalid 1s ease-in-out; /* Fx 5+ */
+  -o-animation:      invalid 1s ease-in-out; /* Opera 12+ */
+  animation:         invalid 1s ease-in-out; /* IE 10+ */
+}
+
+
+
+.checkbox.inline.no_indent,
+.checkbox.inline.no_indent+.checkbox.inline.no_indent {
+  margin-left: 0;
+  margin-right: 10px;
+}
+.checkbox.inline.no_indent:last-child {
+  margin-right: 0px;
+}
+
+
+h4 {
+    clear: both;
+}
+
+.control-group { 
+    margin-bottom: 20px;
+    margin-left: 20px;
+}
+
+.checkbox-columns {
+    -moz-column-count: 4;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 4;
+    -webkit-column-gap: 20px;
+    column-count: 4;
+    column-gap: 20px;
+}
+
+#process_ticket_iframe{
+	min-height: 325px;
+  width: 100%;
+}
+
+#lucky_numbers{
+	margin-top: 5px;
+}
+
+#lotto_submit{
+  margin-top: 5px;
+
+}
+
+#play{
+  margin-top: 8px;
+  margin-bottom: 8px;
+  
+}
+
+.transaction_link{
+ text-decoration:underline
+}
+
+
+

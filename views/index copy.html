@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="./magnific/dist/magnific-popup.css"> 
+<link rel="stylesheet" href="style.css"> 
+<!-- jQuery 1.7.2+ or Zepto.js 1.0+ -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<!-- Magnific Popup core JS file -->
+<script src="magnific/dist/jquery.magnific-popup.js"></script> 
+<!-- Add jQuery library -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+<!-- Add mousewheel plugin (this is optional) -->
+<script type="text/javascript" src="/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+
+<!-- Add fancyBox -->
+<link rel="stylesheet" href="/fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+<!-- Optionally add helpers - button, thumbnail and/or media -->
+<link rel="stylesheet" href="/fancybox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.6"></script>
+
+<link rel="stylesheet" href="/fancybox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+
+
+
+
+</head>
+<body>
+<a class="fancybox" rel="group" href="#popup">dogecoin initial popup</a>
+
+<a class="doge" href="#" onClick="deposit_popup();">dogecoin deposit popup</a>
+
+<!--
+<a class="fancybox" rel="group1" href="#deposit_popup">dogecoin deposit popup</a>
+-->
+
+
+
+    <div id="popup" style="display:none;">
+
+    </div>
+
+
+    <div id="deposit_popup" style="display:none;">
+
+
+
+
+    </div>
+
+
+
+
+<script>
+
+function deposit_popup(){
+
+
+    $.ajax({
+        url: '/get_random_address',
+        type: 'post',
+        data: '',
+        dataType: "json",
+        success: function(data) {
+  
+          random_address = data;
+
+          deposit_address_string = '  Deposit Dogecoins<br>\
+          Note: Before depositing, please confirm that this type of gambling is legal in your jurisdiction.<br><br>\
+          To deposit, send Dogecoins to:<br><br>';
+
+          deposit_address_string +=data;
+
+          $('#deposit_popup').html(deposit_address_string);
+
+          $.fancybox({
+             'autoScale': true,
+             'transitionIn': 'elastic',
+             'transitionOut': 'elastic',
+             'speedIn': 500,
+             'speedOut': 300,
+             'autoDimensions': true,
+             'centerOnScroll': true,
+             'href' : '#deposit_popup'
+          });
+
+
+
+        }
+    });
+
+
+
+/*
+deposit_address = {{{deposit_address}}}
+
+deposit_address_string = '  Deposit Dogecoins<br>\
+  Note: Before depositing, please confirm that this type of gambling is legal in your jurisdiction.<br><br>\
+  To deposit, send Dogecoins to:<br><br>';
+
+  deposit_address_string.append()
+
+
+  $.fancybox({
+     'autoScale': true,
+     'transitionIn': 'elastic',
+     'transitionOut': 'elastic',
+     'speedIn': 500,
+     'speedOut': 300,
+     'autoDimensions': true,
+     'centerOnScroll': true,
+     'href' : '#deposit_popup'
+  });
+
+
+*/
+
+}
+
+
+
+
+
+//var balance = {{{balance}}};
+
+
+//alert(balance);
+
+
+      $(document).ready(function() {
+
+$("#data").fancybox();
+
+$(".fancybox").fancybox();
+
+
+
+      	var name = {{{name}}};
+
+      	string = 'So welcome!<br>\
+Doge-Dice is such provably fair gaming site.<br>\
+You must be over 18 to play Doge-dice<br>\
+You can enter a name that you will be known as on the site. Otherwise we\'ll call you...<br><br>\
+Name: <input id="username" value="' + name + '"></input> <input id="go" type="submit" value="Go" onClick="enter_username()">';
+
+      	$('#popup').html(string);
+
+      });
+
+function enter_username(){
+
+username = $('#username').val();
+
+    $.ajax({
+        url: '/enter_username',
+        type: 'post',
+        data: {
+            username: username
+        },
+        dataType: "json",
+        success: function(data) {
+  
+
+        }
+    });
+
+$.fancybox.close();
+
+}
+
+
+
+
+</script>
+
+
+</body>
+</html>
