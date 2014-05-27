@@ -341,9 +341,9 @@ console.log("coin one balance " + coin_one_balance);
 console.log("coin two balance " + coin_two_balance);
 
 if (last_order == null){
-last_price = null;
-low_price = null;
-high_price = null;
+last_price = 0;
+low_price = 0;
+high_price = 0;
 volume = 0;
 pending_asks = null;
 pending_bids = null;
@@ -372,6 +372,14 @@ console.log('pending asks ' + pending_asks);
 console.log('pending bids ' + pending_bids);
 
 }
+
+console.log('last_price ' + last_price);
+console.log('low price ' + low_price);
+console.log('high price ' + high_price);
+
+console.log('volume ' + volume);
+console.log('pending asks ' + pending_asks);
+console.log('pending bids ' + pending_bids);
 
 
 res.render('trade.html', {csrf: JSON.stringify(req.session._csrf), volume: volume, coin_one_balance: coin_one_balance, coin_two_balance: coin_two_balance, last_price: last_price, low_price: low_price, high_price: high_price, coin_one_name: JSON.stringify(coin_one_name), coin_two_name: JSON.stringify(coin_two_name), coin_one_ticker: JSON.stringify(coin1), coin_two_ticker: JSON.stringify(coin2), pending_asks: JSON.stringify(pending_asks), pending_bids: JSON.stringify(pending_bids)});
@@ -1452,15 +1460,7 @@ res.render('tab_template.html', {data: JSON.stringify(populated.withdrawals)});
 });
 
 
-User.findOne({email: 'a'}).populate({
-  path: 'orders',
-  match: { pending: 'pending'}
-})
-.exec(function (err, populated) {
 
-console.log('popular ' + populated.orders);
-
-});
 
 app.get('/orders', function(req,res){
 

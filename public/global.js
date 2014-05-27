@@ -735,10 +735,12 @@ order_id = $(this).attr('order_id');
     coin_one_ticker_modified = coin_one_ticker.substr(0,1).toUpperCase() + coin_one_ticker.substr(1,coin_one_ticker.length);
     coin_two_ticker_modified = coin_two_ticker.substr(0,1).toUpperCase() + coin_two_ticker.substr(1,coin_two_ticker.length);
 
+
     last_price = last_price.toPrecision(9);
     low_price = low_price.toPrecision(9);
     high_price = high_price.toPrecision(9);
     volume = volume.toPrecision(9);
+
 
     coin_one_balance = coin_one_balance.toPrecision(9);
     coin_two_balance = coin_two_balance.toPrecision(9);
@@ -747,7 +749,9 @@ order_id = $(this).attr('order_id');
     order_fee = .015;
 
 
-    if (pending_asks.length == 0){
+
+
+    if (pending_asks == null){
       pending_asks = new Array();
       obj = new Object();
       obj.price = 5;
@@ -755,7 +759,9 @@ order_id = $(this).attr('order_id');
       pending_asks.push(obj);
     }
 
-    if (pending_bids.length == 0){
+
+
+    if (pending_bids == null){
       pending_bids = new Array();
       obj = new Object();
       obj.price = 5;

@@ -2,8 +2,21 @@
   "name": "helloExpress",
   "version": "0.0.1",
   "private": true,
+  "dependencies": {
+    "jsdom": "latest",
+    "jquery": "latest",
+    "crypto": "latest",
+    "mongoose": "3.8.5",
+    "bitcoin": "latest",
+    "moment": "latest",
+    "express": "3.3.5",
+    "socket.io": "latest",
+    "consolidate": "latest",
+    "connect-mongo": "latest",
+    "sendgrid": "latest"
+  },
   "scripts": {
-    "start": "nodemon dogeponzi2.js",
-    "debug": "node --debug dogeponzi.js"
+    "start": "nodemon exchange.js",
+    "debug": "node --debug exchange.js"
   }
 }
