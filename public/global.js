@@ -8,10 +8,10 @@ password = $('#password').val();
 confirm_password = $('#confirm_password').val();
 
 if (name.length == 0 || email.length == 0 || password.length == 0 || confirm_password.length == 0)
-	alert('Please make sure you filled out all values in the form');
+  alert('Please make sure you filled out all values in the form');
 
 else if ($.trim(password) != $.trim(confirm_password))
-	alert('Please make sure you confirmed the right password');
+  alert('Please make sure you confirmed the right password');
 
 else {
 
@@ -47,7 +47,7 @@ email = $('#email').val();
 password = $('#password').val();
 
 if ( email.length == 0 || password.length == 0 )
-	alert('Please make sure you filled out all values in the form');
+  alert('Please make sure you filled out all values in the form');
 
 else {
 
@@ -60,9 +60,9 @@ $.ajax({
 }).done(function(data){
 
 if (data == 'incorrect')
-	alert("Incorrect username or password");
+  alert("Incorrect username or password");
 else if (data == 'unactivated')
-	alert("User has not been activated");
+  alert("User has not been activated");
 else{
 localStorage.setItem('email', email);
 //alert(localStorage.getItem('email'));
@@ -735,12 +735,10 @@ order_id = $(this).attr('order_id');
     coin_one_ticker_modified = coin_one_ticker.substr(0,1).toUpperCase() + coin_one_ticker.substr(1,coin_one_ticker.length);
     coin_two_ticker_modified = coin_two_ticker.substr(0,1).toUpperCase() + coin_two_ticker.substr(1,coin_two_ticker.length);
 
-
     last_price = last_price.toPrecision(9);
     low_price = low_price.toPrecision(9);
     high_price = high_price.toPrecision(9);
     volume = volume.toPrecision(9);
-
 
     coin_one_balance = coin_one_balance.toPrecision(9);
     coin_two_balance = coin_two_balance.toPrecision(9);
@@ -750,16 +748,13 @@ order_id = $(this).attr('order_id');
 
 
 
-
-    if (pending_asks == null){
+    if ( pending_asks == null){
       pending_asks = new Array();
       obj = new Object();
       obj.price = 5;
       obj.quantity_left = 3;
       pending_asks.push(obj);
     }
-
-
 
     if (pending_bids == null){
       pending_bids = new Array();
@@ -811,7 +806,7 @@ order_id = $(this).attr('order_id');
     </div>\
     </div>\
     <div style="clear:right;"></div>\
-    <div id="chartdiv" style="width:85%; height:600px; "></div>\
+    <div id="chartdiv" style="width:85%; height:600px; margin-top: 60px"></div>\
     <div id="buy_sell">\
     <div id="col1">\
     <h3>Buy ' + coin_one_ticker_modified + '</h3>\
@@ -843,6 +838,9 @@ order_id = $(this).attr('order_id');
     <td >' + (val.price * val.quantity_left).toPrecision(9) + '</td></tr>';
     string += substring;
     });
+
+
+//alert(string);
 
 
     string += '</tbody>\
@@ -887,7 +885,7 @@ order_id = $(this).attr('order_id');
     </div>';
 
 
-//alert(string);
+
 
 $('.inner_content').append(string);
 
@@ -986,6 +984,8 @@ $('.inner_content').append(string);
     array = new Array();
     array.push(data.bitcoin);
     array.push(data.dogecoin);
+    array.push(data.litecoin);
+    array.push(data.vertcoin);
     //alert(JSON.stringify(populated));
     array.sort(function(a,b){return a.coin_number - b.coin_number});
     //alert(JSON.stringify(array));

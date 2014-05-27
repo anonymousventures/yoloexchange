@@ -38,7 +38,7 @@ var sendgrid  = require('sendgrid')('anonymousventures', 'mogulskier');
 
         app.engine('.html', engines.handlebars);
         app.use(express.json());
-		    app.use(express.urlencoded());
+            app.use(express.urlencoded());
         app.use(express.methodOverride());
         app.use(express.cookieParser('asdfsecret'));
         app.use(express.cookieSession());
@@ -93,6 +93,8 @@ var User = new mongoose.Schema({
     activated: { type: Boolean, default: false},
     dogecoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
     bitcoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
+    litecoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
+    vertcoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
     deposits: [{ type: mongoose.Schema.ObjectId, ref: 'Deposit' }],
     withdrawals: [{ type: mongoose.Schema.ObjectId, ref: 'Withdrawal' }],
     orders: [{ type: mongoose.Schema.ObjectId, ref: 'Order' }],
@@ -146,6 +148,14 @@ var Order = new mongoose.Schema({
     user:  { type: mongoose.Schema.ObjectId, ref: 'User' },
 });
 
+var OrderData = new mongoose.Schema({
+    time: Number,
+    coin_ticker_one: String,
+    coin_ticker_two: String,
+    price: Number,
+    quantity: Number
+    });
+
 
 var Coin = new mongoose.Schema({
     coin_name: String,
@@ -172,6 +182,7 @@ Coin = mongoose.model('Coin', Coin);
 Deposit = mongoose.model('Deposit', Deposit);
 Withdrawal = mongoose.model('Withdrawal', Withdrawal);
 Order = mongoose.model('Order', Order);
+OrderData = mongoose.model('OrderData', OrderData);
 
 var altSchema = new mongoose.Schema({
     txin: String,
@@ -199,6 +210,15 @@ ADDRESS = '172f8Eg7KH7yznEPfbnaZ1UYBnryoQdiuA';
 
 
 
+
+
+var litecoin_client = new bitcoin.Client({
+    host: '127.0.0.1',
+    port: 12344,
+    rpcuser: 'litecoinrpc',
+    pass: '8FZDgUAy81XtZbERtPW37G9AUG89ShgLJQTcpuHFhCrN'
+});
+
 var dogecoin_client = new bitcoin.Client({
   host: '127.0.0.1',
   port: 12341,
@@ -206,9 +226,25 @@ var dogecoin_client = new bitcoin.Client({
   pass: '8FZDgUAy81XtZbERtPW37G9AUG89ShgLJQTcpuHFhCrN'
 });
 
+var vertcoin_client = new bitcoin.Client({
+    host: '127.0.0.1',
+    port: 12345,
+    rpcuser: 'vertcoinrpc',
+    pass: '8FZDgUAy81XtZbERtPW37G9AUG89ShgLJQTcpuHFhCrN'
+});
+
+
+litecoin_client.getBlockCount(function(err, blockcount) {
+
+console.log("wtf " + blockcount);
+
+});
+
 all_clients = new Array();
 all_clients.push(bitcoin_client);
 all_clients.push(dogecoin_client);
+all_clients.push(litecoin_client);
+all_clients.push(vertcoin_client);
 
 
 
@@ -317,8 +353,8 @@ current_time = Math.floor(new Date().getTime()/1000);
 one_day_ago = current_time - (60 * 60 * 24);
 
 
-Order.find({$and:[{coin_one_ticker: coin1}, {coin_two_ticker: coin2}, {pending: 'pending'}, {side: 'ask'}, {pending: {'$ne': 'cancelled' }}]}, function(err, pending_asks){
-Order.find({$and:[{coin_one_ticker: coin1}, {coin_two_ticker: coin2}, {pending: 'pending'}, {side: 'bid'}, {pending: {'$ne': 'cancelled' }}]}, function(err, pending_bids){
+Order.find({$and:[{coin_one_ticker: coin1}, {coin_two_ticker: coin2}, {pending: 'pending'}, {side: 'ask'}, {pending: {'$ne': 'cancelled' }}]}).sort({price: 1}).exec( function(err, pending_asks){
+Order.find({$and:[{coin_one_ticker: coin1}, {coin_two_ticker: coin2}, {pending: 'pending'}, {side: 'bid'}, {pending: {'$ne': 'cancelled' }}]}).sort({price: -1}).exec(function(err, pending_bids){
 //find all orders within past day
 Order.find({$and:[{coin_one_ticker: coin1}, {coin_two_ticker: coin2}, {time: {$gte: one_day_ago}}, {pending: {'$ne': 'cancelled' }}]}, function(err, orders_within_day){
 //find last order
@@ -341,9 +377,9 @@ console.log("coin one balance " + coin_one_balance);
 console.log("coin two balance " + coin_two_balance);
 
 if (last_order == null){
-last_price = 0;
-low_price = 0;
-high_price = 0;
+last_price = null;
+low_price = null;
+high_price = null;
 volume = 0;
 pending_asks = null;
 pending_bids = null;
@@ -373,16 +409,94 @@ console.log('pending bids ' + pending_bids);
 
 }
 
-console.log('last_price ' + last_price);
-console.log('low price ' + low_price);
-console.log('high price ' + high_price);
+console.log(coin1);
+console.log(coin2);
+OrderData.find({$and: [{coin_ticker_one: coin1}, {coin_ticker_two: coin2}]}).sort({time: 1}).exec(function(err, order_data){
+//console.log('fucked ' + order_data);
+object = new Object();
 
-console.log('volume ' + volume);
-console.log('pending asks ' + pending_asks);
-console.log('pending bids ' + pending_bids);
+$.each(order_data, function(key,val){
+minute_grouping = Math.floor(new Date(val.time).getTime()/ (1000 * 60));
 
 
-res.render('trade.html', {csrf: JSON.stringify(req.session._csrf), volume: volume, coin_one_balance: coin_one_balance, coin_two_balance: coin_two_balance, last_price: last_price, low_price: low_price, high_price: high_price, coin_one_name: JSON.stringify(coin_one_name), coin_two_name: JSON.stringify(coin_two_name), coin_one_ticker: JSON.stringify(coin1), coin_two_ticker: JSON.stringify(coin2), pending_asks: JSON.stringify(pending_asks), pending_bids: JSON.stringify(pending_bids)});
+if (object[minute_grouping] === undefined){
+    subarray = new Array();
+    subarray.push(val);
+    object[minute_grouping] = subarray;
+}
+else{
+    subarray = object[minute_grouping];
+    subarray.push(val);
+    object[minute_grouping] = subarray;
+}
+
+
+});
+
+console.log('sharray ' + JSON.stringify(object));
+
+chart_array = new Array();
+
+$.each(object, function(key,val){
+
+
+volume = 0;
+$.each(val, function(keyb,valb){
+
+volume += valb.quantity;
+if (keyb == 0){
+lowest_price = valb.price;
+highest_price = valb.price;
+open_price = valb.price;
+}
+else{
+if (valb.price > highest_price)
+    highest_price = valb.price;
+if (valb.price < lowest_price)
+    lowest_price = valb.price;
+}
+
+if (keyb == val.length -1){
+close_price = valb.price;
+}
+});
+subobject = new Object();
+subobject.low = lowest_price;
+subobject.high = highest_price;
+subobject.open = open_price;
+subobject.close = close_price;
+subobject.volume = volume;
+subobject.date = key * 1000 * 60;
+
+chart_array.push(subobject);
+
+
+});
+console.log('\r\n');
+console.log(JSON.stringify(chart_array));
+console.log(volume);
+console.log(last_price);
+console.log(low_price);
+console.log(high_price);
+console.log(coin_one_name);
+console.log(coin_two_name);
+console.log(coin1);
+console.log(coin2);
+console.log(pending_asks);
+console.log(pending_bids);
+
+if (last_price == null)
+    last_price = 0;
+if (low_price == null)
+    low_price = 0;
+if (high_price == null)
+    high_price = 0;
+
+
+
+res.render('trade.html', {chart_info: JSON.stringify(chart_array), csrf: JSON.stringify(req.session._csrf), volume: volume, coin_one_balance: coin_one_balance, coin_two_balance: coin_two_balance, last_price: last_price, low_price: low_price, high_price: high_price, coin_one_name: JSON.stringify(coin_one_name), coin_two_name: JSON.stringify(coin_two_name), coin_one_ticker: JSON.stringify(coin1), coin_two_ticker: JSON.stringify(coin2), pending_asks: JSON.stringify(pending_asks), pending_bids: JSON.stringify(pending_bids)});
+
+});
 
 
 });
@@ -399,7 +513,6 @@ res.render('trade.html', {csrf: JSON.stringify(req.session._csrf), volume: volum
 
 
 });
-
 
 
 app.post('/buy_order',  csrf, function(req,res){
@@ -567,8 +680,9 @@ if (!complete ){
         function callback(){}
         //done updating buyer balance
 
+        time = new Date().getTime();
         order = new Order({
-                        time: new Date().getTime(),
+                        time: time,
                         //last_trade_time: new Date().getTime(),
                         coin_one_ticker: coin_one_ticker,
                         coin_two_ticker: coin_two_ticker,
@@ -578,6 +692,18 @@ if (!complete ){
                         quantity_left: 0,
                         user: user,
                         pending: 'complete'
+        });
+
+        order_data = new OrderData({
+                            time: time,
+                            coin_ticker_one: coin_one_ticker,
+                            coin_ticker_two: coin_two_ticker,
+                            price: ask_price,
+                            quantity: bid_quantity
+        });
+
+        order_data.save(function(err){
+
         });
 
         user.orders.push(order);
@@ -647,11 +773,26 @@ if (!complete ){
         user[coin_two_name].update({$inc: {balance: -1 * ask_value}}, { w: 1 }, callback);
         //done updating buyer balance
 
+        time = new Date().getTime();
+
+        order_data = new OrderData({
+                            time: time,
+                            coin_ticker_one: coin_one_ticker,
+                            coin_ticker_two: coin_two_ticker,
+                            price: ask_price,
+                            quantity: ask_quantity_left
+        });
+
+        order_data.save(function(err){
+
+        });
+
+
         if (key == ask.length -1 ){
 
 
             order = new Order({
-                    time: new Date().getTime(),
+                    time: time,
                     last_trade_time: new Date().getTime(),
                     coin_one_ticker: coin_one_ticker,
                     coin_two_ticker: coin_two_ticker,
@@ -889,8 +1030,10 @@ console.log("fuckingtest" + bid_quantity_left + ' ' + ask_quantity_left);
         function callback(){}
         //done updating buyer balance
 
+        time = new Date().getTime();
+
         order = new Order({
-                        time: new Date().getTime(),
+                        time: time,
                         coin_one_ticker: coin_one_ticker,
                         coin_two_ticker: coin_two_ticker,
                         side: 'ask',
@@ -900,6 +1043,19 @@ console.log("fuckingtest" + bid_quantity_left + ' ' + ask_quantity_left);
                         user: user,
                         pending: 'complete'
         });
+
+        order_data = new OrderData({
+                            time: time,
+                            coin_ticker_one: coin_one_ticker,
+                            coin_ticker_two: coin_two_ticker,
+                            price: bid_price,
+                            quantity: ask_quantity
+        });
+
+        order_data.save(function(err){
+
+        });
+
 
         user.orders.push(order);
 
@@ -979,12 +1135,28 @@ console.log("fuckingtest" + bid_quantity_left + ' ' + ask_quantity_left);
         user[coin_two_name].update({$inc: {balance: sell_price}}, { w: 1 }, callback);
         //done updating  asker's balance
 
+        time = new Date().getTime();
+
+
+        order_data = new OrderData({
+                            time: time,
+                            coin_ticker_one: coin_one_ticker,
+                            coin_ticker_two: coin_two_ticker,
+                            price: bid_price,
+                            quantity: bid_quantity_left
+        });
+
+        order_data.save(function(err){
+
+        });
+
+
         //create ask order after processing last bid
         if (key == bid.length -1 ){
 
 
             order = new Order({
-                    time: new Date().getTime(),
+                    time: time,
                     coin_one_ticker: coin_one_ticker,
                     coin_two_ticker: coin_two_ticker,
                     side: 'ask',
@@ -1219,6 +1391,12 @@ else {
 
 });
 
+vertcoin_client.getNewAddress(function(err, address) {
+
+    console.log('fucking address ' + address);
+
+});
+
 app.post('/register', function(req,res){
 body = req.body;
 
@@ -1239,6 +1417,64 @@ require('crypto').randomBytes(48, function(ex, buf) {
     });
     user.save(function(err){
         console.log('user has been saved');
+
+
+
+
+litecoin_client.getNewAddress(function(err, address) {
+
+litecoin = new Coin({
+    coin_name: 'litecoin',
+    code: 'ltc',
+    user: user,
+    deposit_address: address,
+    confirmation: 1,
+    coin_number: 3,
+    withdraw_fee: .01,
+    order_fee: .015
+});
+
+litecoin.save(function(err){
+
+User.findOneAndUpdate({hash: token}, {$set: {litecoin: litecoin}},function(err, user){
+console.log("did find" + JSON.stringify(user));
+console.log("edited");
+
+});
+
+console.log('coin saved');
+
+});
+
+});
+
+
+vertcoin_client.getNewAddress(function(err, address) {
+
+vertcoin = new Coin({
+    coin_name: 'vertcoin',
+    code: 'vtc',
+    user: user,
+    deposit_address: address,
+    confirmation: 1,
+    coin_number: 4,
+    withdraw_fee: .3,
+    order_fee: .015
+});
+
+vertcoin.save(function(err){
+
+User.findOneAndUpdate({hash: token}, {$set: {vertcoin: vertcoin}},function(err, user){
+console.log("did find" + JSON.stringify(user));
+console.log("edited");
+
+});
+
+console.log('coin saved');
+
+});
+
+});
 
 
 
@@ -1361,7 +1597,7 @@ console.log(email);
 
 User
 .findOne({ email: email })
-.populate('bitcoin dogecoin')
+.populate('bitcoin dogecoin litecoin vertcoin')
 .exec(function (err, data) {
     console.log(data);
     res.render('tab_template.html', {data: JSON.stringify(data)});
@@ -1460,7 +1696,15 @@ res.render('tab_template.html', {data: JSON.stringify(populated.withdrawals)});
 });
 
 
+User.findOne({email: 'a'}).populate({
+  path: 'orders',
+  match: { pending: 'pending'}
+})
+.exec(function (err, populated) {
 
+console.log('popular ' + populated.orders);
+
+});
 
 app.get('/orders', function(req,res){
 
@@ -1670,7 +1914,6 @@ all_clients[i].getBlockHash(blockcount-2000, function(err, blockhash) {
 all_clients[i].listSinceBlock(blockhash, 1, function(err, transactions) {
 
 
-
 if (transactions != null && transactions != undefined){
 coin_type = all_clients[i]['rpc']['opts']['user'];
 coin_type = coin_type.substr(0, coin_type.indexOf('coin'));
@@ -1816,6 +2059,5 @@ else console.log('nonono')
 
 
 server.listen(app.get('port'));
-
 
 
