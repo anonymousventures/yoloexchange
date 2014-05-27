@@ -747,7 +747,8 @@ order_id = $(this).attr('order_id');
     order_fee = .015;
 
 
-    if (pending_asks.length == 0){
+
+    if ( pending_asks == null){
       pending_asks = new Array();
       obj = new Object();
       obj.price = 5;
@@ -755,7 +756,7 @@ order_id = $(this).attr('order_id');
       pending_asks.push(obj);
     }
 
-    if (pending_bids.length == 0){
+    if (pending_bids == null){
       pending_bids = new Array();
       obj = new Object();
       obj.price = 5;
@@ -805,7 +806,7 @@ order_id = $(this).attr('order_id');
     </div>\
     </div>\
     <div style="clear:right;"></div>\
-    <div id="chartdiv" style="width:85%; height:600px; "></div>\
+    <div id="chartdiv" style="width:85%; height:600px; margin-top: 60px"></div>\
     <div id="buy_sell">\
     <div id="col1">\
     <h3>Buy ' + coin_one_ticker_modified + '</h3>\
@@ -837,6 +838,9 @@ order_id = $(this).attr('order_id');
     <td >' + (val.price * val.quantity_left).toPrecision(9) + '</td></tr>';
     string += substring;
     });
+
+
+//alert(string);
 
 
     string += '</tbody>\
@@ -881,7 +885,7 @@ order_id = $(this).attr('order_id');
     </div>';
 
 
-//alert(string);
+
 
 $('.inner_content').append(string);
 
@@ -980,6 +984,8 @@ $('.inner_content').append(string);
     array = new Array();
     array.push(data.bitcoin);
     array.push(data.dogecoin);
+    array.push(data.litecoin);
+    array.push(data.vertcoin);
     //alert(JSON.stringify(populated));
     array.sort(function(a,b){return a.coin_number - b.coin_number});
     //alert(JSON.stringify(array));
