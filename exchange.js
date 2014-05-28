@@ -573,6 +573,10 @@ if (ask.length == 0 && quantity > min_order){
 
 console.log("it is in here lol");
 
+function callback(){}
+coin[coin_two_name].update({$inc: {balance: -1 * bid_quantity * bid_price, held_for_orders: bid_quantity * bid_price}}, { w: 1 }, callback);
+
+
 User.findOne({email: req.session.user.email}, function(err, user){
 
 order = new Order({
@@ -925,9 +929,16 @@ console.log('inside');
 
 if (bid.length == 0 && ask_quantity > min_order){
 
+function callback(){}
+coin[coin_one_name].update({$inc: {balance: -1 * ask_quantity * ask_price, held_for_orders: ask_quantity * ask_price}}, { w: 1 }, callback);
+
+
+
 console.log("it is in here lol");
 
 User.findOne({email: req.session.user.email}, function(err, user){
+
+
 
 order = new Order({
                 time: new Date().getTime(),
