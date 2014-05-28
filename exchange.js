@@ -29,7 +29,7 @@ var sendgrid  = require('sendgrid')('anonymousventures', 'mogulskier');
 
     app.configure(function() {
         app.set('views', __dirname + '/views');
-        app.set('port', process.env.PORT || 8000);
+        app.set('port', process.env.PORT || 8080);
         app.set('view engine', 'html');
 
         app.set('view options', {
@@ -94,7 +94,7 @@ var User = new mongoose.Schema({
     dogecoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
     bitcoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
     litecoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
-    vertcoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
+    //vertcoin: { type: mongoose.Schema.ObjectId, ref: 'Coin' },
     deposits: [{ type: mongoose.Schema.ObjectId, ref: 'Deposit' }],
     withdrawals: [{ type: mongoose.Schema.ObjectId, ref: 'Withdrawal' }],
     orders: [{ type: mongoose.Schema.ObjectId, ref: 'Order' }],
@@ -215,7 +215,7 @@ ADDRESS = '172f8Eg7KH7yznEPfbnaZ1UYBnryoQdiuA';
 var litecoin_client = new bitcoin.Client({
     host: '127.0.0.1',
     port: 12344,
-    rpcuser: 'litecoinrpc',
+    user: 'litecoinrpc',
     pass: '8FZDgUAy81XtZbERtPW37G9AUG89ShgLJQTcpuHFhCrN'
 });
 
@@ -226,27 +226,16 @@ var dogecoin_client = new bitcoin.Client({
   pass: '8FZDgUAy81XtZbERtPW37G9AUG89ShgLJQTcpuHFhCrN'
 });
 
-var vertcoin_client = new bitcoin.Client({
-    host: '127.0.0.1',
-    port: 12345,
-    rpcuser: 'vertcoinrpc',
-    pass: '8FZDgUAy81XtZbERtPW37G9AUG89ShgLJQTcpuHFhCrN'
-});
 
-
-litecoin_client.getBlockCount(function(err, blockcount) {
-
-console.log("wtf " + blockcount);
-
-});
 
 all_clients = new Array();
 all_clients.push(bitcoin_client);
 all_clients.push(dogecoin_client);
 all_clients.push(litecoin_client);
-all_clients.push(vertcoin_client);
 
 
+prefix = 'http://localhost:8080/';
+prefix = 'http://ec2-54-186-16-187.us-west-2.compute.amazonaws.com/';
 
 var io = require('socket.io').listen(server);
 
@@ -376,14 +365,14 @@ coin_two_name = coin_two.coin_name;
 console.log("coin one balance " + coin_one_balance);
 console.log("coin two balance " + coin_two_balance);
 
+
+
+
 if (last_order == null){
 last_price = null;
 low_price = null;
 high_price = null;
 volume = 0;
-pending_asks = null;
-pending_bids = null;
-
 }
 else{
 last_price = last_order.price;
@@ -472,6 +461,11 @@ chart_array.push(subobject);
 
 
 });
+if (pending_asks.length == 0)
+    pending_asks = null;
+if (pending_bids.length == 0 )
+    pending_bids = null;
+
 console.log('\r\n');
 console.log(JSON.stringify(chart_array));
 console.log(volume);
@@ -610,7 +604,7 @@ console.log('order saved');
 
 
 req.session.processing = false;
-res.end('done');
+res.end(JSON.stringify('done'));
 
 //console.log(req.session.processing);
 
@@ -959,6 +953,9 @@ order.save(function(err){
 console.log('order saved');
 
 });
+
+req.session.processing_sell = false;
+res.end('done');
 
 });
 
@@ -1331,10 +1328,11 @@ if (user != null && user != undefined){
 object = new Object();
 object.email = user.email;
 object.full_name = user.full_name;
-
+object.user_id = user._id;
 
 req.session.activated = true;
 req.session.user = object;
+
 res.redirect('/');
 
 
@@ -1391,21 +1389,38 @@ else {
 
 });
 
-vertcoin_client.getNewAddress(function(err, address) {
+litecoin_client.getBlockCount(function(err, test){
 
-    console.log('fucking address ' + address);
+console.log('fuck ' + test);
 
 });
+
+litecoin_client.getNewAddress(function(err, address) {
+    console.log('yolo homie ' + address);
+});
+
 
 app.post('/register', function(req,res){
 body = req.body;
 
 console.log(body);
 
+User.findOne({email: body.email}, function(err, user){
+
+console.log(user);
+if (user != null){
+
+if (user.activated == false)
+res.end('1');
+else
+res.end('2');
+
+}
+else{
 require('crypto').randomBytes(48, function(ex, buf) {
     token = buf.toString('base64').replace(/\//g,'_').replace(/\+/g,'-');
 
-    activation_url = 'http://localhost:8000/activate/' + token;
+    activation_url = prefix + 'activate/' + token;
 
 
     console.log(token);
@@ -1418,6 +1433,26 @@ require('crypto').randomBytes(48, function(ex, buf) {
     user.save(function(err){
         console.log('user has been saved');
 
+string = 'Welcome! \r\n Please activate your account by clicking the\
+             link below: \r\n\r\n ' + prefix + 'activate/' + token;
+
+html = '<p>Hello,<br />\
+    Welcome to GenesisBlock. The following is your activation link:<br/><br/>\
+    <strong>' + prefix + 'activate/' + token + '</strong></p>';
+
+
+sendgrid.send({
+  to:       body.email,
+  from:     'info@GenesisBlock.io',
+  subject:  'GenesisBlock - cryptocurrency exchange account activation',
+  text:     string,
+  html: html
+}, function(err, json) {
+
+  if (err) { return console.error(err); }
+});
+
+  res.end("done"); 
 
 
 
@@ -1438,7 +1473,7 @@ litecoin.save(function(err){
 
 User.findOneAndUpdate({hash: token}, {$set: {litecoin: litecoin}},function(err, user){
 console.log("did find" + JSON.stringify(user));
-console.log("edited");
+console.log("edited litecoin address" + address);
 
 });
 
@@ -1449,6 +1484,7 @@ console.log('coin saved');
 });
 
 
+/*
 vertcoin_client.getNewAddress(function(err, address) {
 
 vertcoin = new Coin({
@@ -1474,7 +1510,7 @@ console.log('coin saved');
 
 });
 
-});
+}); */
 
 
 
@@ -1538,25 +1574,13 @@ console.log('coin saved');
 });
 
 
-sendgrid.send({
-  to:       body.email,
-  from:     'info@cryptox.com',
-  subject:  'Hello World',
-  text:     activation_url
-}, function(err, json) {
-  if (err) { return console.error(err); }
-  console.log(json);
-  res.end("done");
-
-
-}); 
-
-
-
 
 
 
 }); 
+}
+
+});
 
 });
 
@@ -1597,7 +1621,7 @@ console.log(email);
 
 User
 .findOne({ email: email })
-.populate('bitcoin dogecoin litecoin vertcoin')
+.populate('bitcoin dogecoin litecoin')
 .exec(function (err, data) {
     console.log(data);
     res.render('tab_template.html', {data: JSON.stringify(data)});
@@ -1622,6 +1646,8 @@ res.render('index_exchange_logged_in.html', {activated: activated, user: JSON.st
 
 });
 
+
+
 app.get('/', function(req,res){
 
 activated = req.session.activated;
@@ -1631,7 +1657,6 @@ user = req.session.user;
 if (activated == undefined) 
     activated = false;
 
-
 console.log(activated);
 console.log(user);
 res.render('index_exchange.html', {activated: activated, user: JSON.stringify(user) });
@@ -1639,6 +1664,82 @@ res.render('index_exchange.html', {activated: activated, user: JSON.stringify(us
 
 });
 
+app.get('/voting', function(req,res){
+
+activated = req.session.activated;
+user = req.session.user;
+
+//console.log(activated);
+if (activated == undefined) 
+    activated = false;
+
+console.log(activated);
+console.log(user);
+res.render('voting.html', {activated: activated, user: JSON.stringify(user) });
+
+});
+
+app.get('/support', function(req,res){
+
+activated = req.session.activated;
+user = req.session.user;
+
+//console.log(activated);
+if (activated == undefined) 
+    activated = false;
+
+console.log(activated);
+console.log(user);
+res.render('support.html', {activated: activated, user: JSON.stringify(user) });
+
+});
+
+app.get('/fees', function(req,res){
+
+activated = req.session.activated;
+user = req.session.user;
+
+//console.log(activated);
+if (activated == undefined) 
+    activated = false;
+
+console.log(activated);
+console.log(user);
+res.render('fees.html', {activated: activated, user: JSON.stringify(user) });
+
+});
+
+app.get('/about', function(req,res){
+
+activated = req.session.activated;
+user = req.session.user;
+
+//console.log(activated);
+if (activated == undefined) 
+    activated = false;
+
+console.log(activated);
+console.log(user);
+res.render('about.html', {activated: activated, user: JSON.stringify(user) });
+
+});
+
+app.get('/trading', function(req,res){
+
+activated = req.session.activated;
+user = req.session.user;
+
+//console.log(activated);
+if (activated == undefined) 
+    activated = false;
+
+console.log(activated);
+console.log(user);
+res.render('trading.html', {activated: activated, user: JSON.stringify(user) });
+
+
+
+});
 
 app.get('/tester', function(req,res){
 
@@ -1696,15 +1797,7 @@ res.render('tab_template.html', {data: JSON.stringify(populated.withdrawals)});
 });
 
 
-User.findOne({email: 'a'}).populate({
-  path: 'orders',
-  match: { pending: 'pending'}
-})
-.exec(function (err, populated) {
 
-console.log('popular ' + populated.orders);
-
-});
 
 app.get('/orders', function(req,res){
 
@@ -1905,9 +1998,19 @@ sendgrid.send({
 setInterval(function(){
 
 
-for (var i=0; i<2; i++){
+for (var i=0; i<3; i++){
 (function(i){
 all_clients[i].getBlockCount(function(err, blockcount) {
+console.log("begin first");
+coin_type = all_clients[i]['rpc']['opts']['user'];
+coin_type = coin_type.substr(0, coin_type.indexOf('coin'));
+coin_name = coin_type + 'coin';
+
+/*
+console.log(coin_name);
+console.log('block count ' + blockcount);
+console.log("end first");*/
+
 
 all_clients[i].getBlockHash(blockcount-2000, function(err, blockhash) {
 
@@ -1919,6 +2022,12 @@ coin_type = all_clients[i]['rpc']['opts']['user'];
 coin_type = coin_type.substr(0, coin_type.indexOf('coin'));
 coin_name = coin_type + 'coin';
 
+/*
+console.log(coin_name);
+console.log('block count ' + blockcount);
+console.log(blockhash);
+console.log(transactions);
+*/
 
 //console.log(transactions);
 
@@ -2051,7 +2160,7 @@ else console.log('nonono')
 }(i));
 
 }
-},8000);
+},8080);
 
 //update deposits that have been confirmed
 

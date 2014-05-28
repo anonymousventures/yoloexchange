@@ -10,13 +10,13 @@
   <meta property="og:image"  content="http://www.fbnstatic.com/static/managed/img/fb2/news/bitcoin.jpg" /> 
 
 <link rel="stylesheet" href="./magnific/dist/magnific-popup.css"> 
-<link rel="stylesheet" href="../../style3.css"> 
+<link rel="stylesheet" href="style3.css"> 
 <!-- jQuery 1.7.2+ or Zepto.js 1.0+ -->
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 <!-- Magnific Popup core JS file -->
-<script src="../magnific/dist/jquery.magnific-popup.js"></script> 
+<script src="magnific/dist/jquery.magnific-popup.js"></script> 
 <!-- Add jQuery library -->
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 
@@ -35,7 +35,7 @@
 <link rel="stylesheet" href="/fancybox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" type="text/css" media="screen" />
 <script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
 
-<link rel="stylesheet" href="../../css/bootstrap.css">
+<link rel="stylesheet" href="css/bootstrap.css">
 
 <!-- Optional theme -->
 <!--
@@ -46,25 +46,16 @@
 
 
 <script src="/socket.io/socket.io.js"></script>
-
 <script>
-$( document ).ready(function() {
-deposits = {{{populated}}};
-//deposits = populated.deposits;
-//alert(JSON.stringify(populated));
-//alert(JSON.stringify(coin_info));
-
-});
+activated = {{{activated}}};
+user = {{{user}}};
+//alert(user);
 
 </script>
-
-<script src="../global.js"></script>
-
+<script src="global.js"></script>
 
 <script>
 
-
-//alert('hi');
 
 </script>
 
@@ -81,7 +72,7 @@ deposits = {{{populated}}};
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#" id="brandname"> BrandName</a>
+      <a class="navbar-brand" href="/" id="brandname"> GenesisBlock </a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -90,67 +81,79 @@ deposits = {{{populated}}};
         <!--
         <li class="active" style="margin-left: 30px"><a href="#">Link</a></li>
         -->
-        <li><a href="#">Trading</a></li>
-        <li><a href="#">Voting</a></li>
-        <li><a href="#">Fees</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Support</a></li>
+        <li><a  href="trading">Trading</a></li>
+        <li><a href="voting">Voting</a></li>
+        <li><a href="fees">Fees</a></li>
+        <li class="active"><a href="about">About</a></li>
+        <li  ><a href="support">Support</a></li>   
         
       </ul>
 
-      <ul class="nav navbar-nav navbar-right">
+      <ul id="right_bar" class="nav navbar-nav navbar-right">
+        <li><a href="register" id="register">Register</a></li>
+        <li><a href="login" id="login">Login</a></li>
 
-
-          <li class="dropdown">
+            <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
 
       
           <ul class="dropdown-menu">
-            <li><a href="#">Profile</a></li>
-            <li><a href="balances">Balances</a></li>
-            <li><a href="#">Deposits</a></li>
-            <li><a href="#">Withdrawals</a></li>
-            <li><a href="#">Orders</a></li>
-            <li><a href="#">Trade History</a></li>
-            <li><a href="#">Login History</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Separated link</a></li>
           </ul>
-    
-        </li>  
+      
 
-
+        </li>    -->
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
 
+<div id="pushed_container">
 
 
+<div class="center">
+<div id="voting_header"> About Us </div>
 
-<div id="balances">
+<div id="about_explanation">
+<h2>About GenesisBlock </h2>
 
-<ul class="nav nav-tabs" id="nav_tabs">
-  <!--
-  <li class="active"><a href="#">Profile</a></li>
-  -->
-  <li><a href="#">Profile</a></li>
-  <li><a href="#">Balances</a></li>
-  <li class="active"><a href="#" >Deposits</a></li>
-  <li><a href="#">Withdrawals</a></li>
-  <li><a href="#">Orders</a></li>
-  <li><a href="#">Trade History</a></li>
-  <li><a href="#">Login History</a></li>
-</ul>
+GenesisBlock is a startup, based in the US, that focuses on the exchanging of cryptocurrencies. Launched in May 2014, we aim to provide the best user experience matched with quick support times. We will be adding new coins over the next months based on popularity.
 
-<div id="below_tab_wrapper">
+Our team is made up of talented developers and network engineers who know how to build a fast, efficient and secure system that takes advantage of the latest web technologies. Check out our security page to find out more about the security precautions we have in place.
+<h2>Our Objectives </h2>
+
+A secure & reliable trading environment.
+A fast matching engine that executes trades within milliseconds.
+The latest market data available to all users as fast as possible.
+A highly scalable architecture that can handle spikes of activity.
+An appealing & responsive user interface that is easy to use.
+Fast support responses, typically within 24 hours.
+Supporting new coins with lower fees for buyers to begin with.
+<h2>Our Architecture:</h2>
+
+Full DDoS protection with a leading provider
+CDN Caching for all static content
+Distributed wallets & Hot / Cold wallets
+Tiered design from Day 1 to improve scalability
+Push instead of pull to deliver all market updates as fast as possible
+2 Factor Authentication as standard for all staff
+<h2>Contact Us </h2>
+
+Our primary method of communication is email, we also have an online help desk.
+
+Email Address: support [@] GenesisBlock.com
+
+
 
 
 </div>
+
+
 </div>
-
-<div id="user_info">
-  
-
 </div>
 
 </body>

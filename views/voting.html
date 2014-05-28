@@ -10,13 +10,13 @@
   <meta property="og:image"  content="http://www.fbnstatic.com/static/managed/img/fb2/news/bitcoin.jpg" /> 
 
 <link rel="stylesheet" href="./magnific/dist/magnific-popup.css"> 
-<link rel="stylesheet" href="../../style3.css"> 
+<link rel="stylesheet" href="style3.css"> 
 <!-- jQuery 1.7.2+ or Zepto.js 1.0+ -->
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 <!-- Magnific Popup core JS file -->
-<script src="../magnific/dist/jquery.magnific-popup.js"></script> 
+<script src="magnific/dist/jquery.magnific-popup.js"></script> 
 <!-- Add jQuery library -->
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 
@@ -35,7 +35,7 @@
 <link rel="stylesheet" href="/fancybox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" type="text/css" media="screen" />
 <script type="text/javascript" src="/fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
 
-<link rel="stylesheet" href="../../css/bootstrap.css">
+<link rel="stylesheet" href="css/bootstrap.css">
 
 <!-- Optional theme -->
 <!--
@@ -46,25 +46,16 @@
 
 
 <script src="/socket.io/socket.io.js"></script>
-
 <script>
-$( document ).ready(function() {
-deposits = {{{populated}}};
-//deposits = populated.deposits;
-//alert(JSON.stringify(populated));
-//alert(JSON.stringify(coin_info));
-
-});
+activated = {{{activated}}};
+user = {{{user}}};
+//alert(user);
 
 </script>
-
-<script src="../global.js"></script>
-
+<script src="global.js"></script>
 
 <script>
 
-
-//alert('hi');
 
 </script>
 
@@ -81,7 +72,7 @@ deposits = {{{populated}}};
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#" id="brandname"> BrandName</a>
+      <a class="navbar-brand" href="/" id="brandname"> GenesisBlock </a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -90,67 +81,55 @@ deposits = {{{populated}}};
         <!--
         <li class="active" style="margin-left: 30px"><a href="#">Link</a></li>
         -->
-        <li><a href="#">Trading</a></li>
-        <li><a href="#">Voting</a></li>
-        <li><a href="#">Fees</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Support</a></li>
+        <li><a  href="trading">Trading</a></li>
+        <li  class="active"><a href="voting">Voting</a></li>
+        <li><a href="fees">Fees</a></li>
+        <li><a href="about">About</a></li>
+        <li><a href="support">Support</a></li>
         
       </ul>
 
-      <ul class="nav navbar-nav navbar-right">
+      <ul id="right_bar" class="nav navbar-nav navbar-right">
+        <li><a href="register" id="register">Register</a></li>
+        <li><a href="login" id="login">Login</a></li>
 
-
-          <li class="dropdown">
+            <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
 
       
           <ul class="dropdown-menu">
-            <li><a href="#">Profile</a></li>
-            <li><a href="balances">Balances</a></li>
-            <li><a href="#">Deposits</a></li>
-            <li><a href="#">Withdrawals</a></li>
-            <li><a href="#">Orders</a></li>
-            <li><a href="#">Trade History</a></li>
-            <li><a href="#">Login History</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Separated link</a></li>
           </ul>
-    
-        </li>  
+      
 
-
+        </li>    -->
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
 
+<div id="pushed_container">
 
 
+<div class="center">
+<div id="voting_header"> Coin Voting </div>
 
-<div id="balances">
+<div id="voting_explanation">
+We're always looking to add new markets for the best altcoins, and to help us with this we'd like to ask you, our users to vote on what you'd like to see offered at GenesisBlock.<br><br>
 
-<ul class="nav nav-tabs" id="nav_tabs">
-  <!--
-  <li class="active"><a href="#">Profile</a></li>
-  -->
-  <li><a href="#">Profile</a></li>
-  <li><a href="#">Balances</a></li>
-  <li class="active"><a href="#" >Deposits</a></li>
-  <li><a href="#">Withdrawals</a></li>
-  <li><a href="#">Orders</a></li>
-  <li><a href="#">Trade History</a></li>
-  <li><a href="#">Login History</a></li>
-</ul>
+Below is a list of coins that we're considering adding, ordered by the most voted. Please vote for your chosen coin below, due to the recent abuse of the system by bots, only registered users with a trade history are permitted to vote for coins. Every user is limited to 1 (one) vote per hour.<br><br>
 
-<div id="below_tab_wrapper">
+We're also accepting payment votes! We've put a lot of time and capital in to making the exchange, and we believe it's only right to let users show their confidence in new coins by allowing them to use their wallets. Each 0.001 BTC received will count for 1 vote. All payment votes will be publicly visible, as you can see by clicking the addresses below, and will go directly to improving GenesisBlock's infrastructure. Payment votes are automatically credited every 15 minutes after 1 confirm.<br><br>
+
+We take the voting winner every Monday evening (UTC), we announce the official closing time earlier in the day. Have a new coin that isn't on the list? Please contact us at support [@] GenesisBlock.com with the coin details (name and code) and bitcointalk thread link and we'll get the coin added. We reserve the right to add new markets outside of the voting system where we feel necessary. 
+</div>
 
 
 </div>
-</div>
-
-<div id="user_info">
-  
-
 </div>
 
 </body>

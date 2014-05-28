@@ -14,6 +14,30 @@ body {
 
 }
 
+#voting_header{
+  font-weight: bold;
+  font-size: 35px;
+  margin-top: 70px;
+  margin-bottom: 20px;
+  font: 40px "Open Sans", "Lucida Sans Unicode", "Lucida Grande", Arial, Helvetica, sans-serif;
+}
+
+#voting_explanation{
+  text-align: left;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+#about_explanation{
+  text-align: left;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+#fees_explanation{
+
+}
+
 #brandname{
 margin-left: 30px;
 

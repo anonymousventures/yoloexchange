@@ -1,5 +1,39 @@
 $( document ).ready(function() {
 
+if (document.URL.indexOf('localhost') != -1 )
+  prefix = 'http://localhost:8080/';
+else
+  prefix = 'http://ec2-54-186-16-187.us-west-2.compute.amazonaws.com/';
+
+
+if (document.URL.indexOf('trading') != -1 || document.URL.indexOf('voting') != -1 || document.URL.indexOf('fees') != -1 || document.URL.indexOf('about') != -1 || document.URL.indexOf('support') != -1 || document.URL == prefix){
+
+
+if (activated){
+  $('#right_bar').empty();
+string = '<li class="dropdown">\
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hello ' + user.full_name + '<b class="caret"></b></a>\
+          <ul class="dropdown-menu">\
+            <li><a href="profile">Profile</a></li>\
+            <li><a href="balances">Balances</a></li>\
+            <li><a href="deposit">Deposits</a></li>\
+            <li><a href="withdrawal">Withdrawals</a></li>\
+            <li><a href="orders">Orders</a></li>\
+            <li><a href="trade_history">Trade History</a></li>\
+            <li><a href="login_history">Login History</a></li>\
+            <li><a href="logout">Logout</a></li>\
+          </ul>\
+        </li>';
+
+$('#right_bar').append(string);
+
+}
+}
+
+
+
+
+
 $('#register_button').click(function(){
 
 name = $('#name').val();
@@ -7,7 +41,11 @@ email = $('#email').val();
 password = $('#password').val();
 confirm_password = $('#confirm_password').val();
 
-if (name.length == 0 || email.length == 0 || password.length == 0 || confirm_password.length == 0)
+
+
+if ($('#terms_checkbox').is(":checked") == false)
+  alert("Please make sure you read our terms of service, and check box");
+else if (name.length == 0 || email.length == 0 || password.length == 0 || confirm_password.length == 0)
   alert('Please make sure you filled out all values in the form');
 
 else if ($.trim(password) != $.trim(confirm_password))
@@ -23,11 +61,12 @@ $.ajax({
   dataType: "html"
 }).done(function(data){
 
-//string = ''
-
-
-
-alert(data);
+if (data == '1')
+alert("Account registered, but not activated yet. Please search for activation email in your inbox / spam folder");
+else if (data == '2')
+alert("Account already registered");
+else
+alert('Your activation link has been sent to: ' + email );
 
 
 });
@@ -62,13 +101,13 @@ $.ajax({
 if (data == 'incorrect')
   alert("Incorrect username or password");
 else if (data == 'unactivated')
-  alert("User has not been activated");
+  alert("User has not been activated yet. Please check email");
 else{
 localStorage.setItem('email', email);
 //alert(localStorage.getItem('email'));
 
-alert(data);
-window.location = "http://localhost:8000";
+//alert(data);
+window.location = prefix;
 }
 
 });
@@ -84,16 +123,6 @@ window.location = "http://localhost:8000";
 
 
 
-if (document.URL == 'http://localhost:8000/'){
-
-if (activated){
-
-$('#user_info').append('hello');
-
-}
-
-
-}
 
 
 
@@ -116,7 +145,7 @@ alert(deposit_address);
   if (document.URL.indexOf('org') != -1)
       root = window.location.host;
   else 
-      root = 'http://localhost:8000';
+      root = 'http://localhost:8080';
 
 
   var socket = io.connect(root);
@@ -684,7 +713,7 @@ substring = '<tr id="tab_row">\
         <td class="tab_td_order">' + val.quantity * val.price * .015 + '</td>\
         <td class="tab_td_order">\
         <a class="cancel_order" href="#" order_id="' + val._id + '">\
-        <img src="https://www.mintpal.com/assets/images/icons/delete.png"  alt="Cancel" class="2x" width="16"><br>  Cancel </a>\
+        <img src="https://www.GenesisBlock.com/assets/images/icons/delete.png"  alt="Cancel" class="2x" width="16"><br>  Cancel </a>\
         </td>\
 </tr>';
 string += substring;
@@ -716,9 +745,6 @@ order_id = $(this).attr('order_id');
 
 
   }
-
-
-
 
 
 
@@ -813,7 +839,7 @@ order_id = $(this).attr('order_id');
     <div class="success box">Your ' + coin_two_ticker_upper + ' balance is <strong><a href="asdf" class="exchange_balance">' + coin_two_balance + '</a></strong>.</div>\
     <div class="box options">\
                 <span class="label_style">Amount:</span> <input type="number" id="bid_quantity" name="amount" value="0.00000000" class="required"> ' + coin_one_ticker_upper + '<br>\
-                <span class="label_style">Price Per DOGE:</span> <input type="number" id="bid_price" name="price" value="' + pending_asks[0].price.toPrecision(9) + '" class="required"> ' + coin_two_ticker_upper + '<br>\
+                <span class="label_style">Price Per ' + coin_one_ticker_upper + ':</span> <input type="number" id="bid_price" name="price" value="' + pending_asks[0].price.toPrecision(9) + '" class="required"> ' + coin_two_ticker_upper + '<br>\
                 <span class="label_style">Total:</span> <span class="total" id="buy_total">' + pending_asks[0].price.toPrecision(9) + '</span> <br>\
                 <span class="label_style">Trading Fee:</span> <span class="fee" id="buy_fee">0.00000000</span> BTC (' + (10 * order_fee).toPrecision(2) +  '%)<br>\
                 <span class="label_style">Net Total:</span> <span class="netTotal" >' + pending_asks[0].price.toPrecision(9) + '</span> ' + coin_two_ticker_upper + 
@@ -825,9 +851,9 @@ order_id = $(this).attr('order_id');
     <table class="table" id="sell_table">\
     <tbody>\
     <tr>\
-                  <th>PRICE (BTC)</th>\
-                  <th>DOGE</th>\
-                  <th>BTC</th>\
+                  <th>PRICE (' + coin_two_ticker_upper + ')</th>\
+                  <th>' + coin_one_ticker_upper + '</th>\
+                  <th>' + coin_two_ticker_upper + '</th>\
                 </tr>';
 
 
@@ -852,7 +878,7 @@ order_id = $(this).attr('order_id');
     <div class="fail box">Your ' + coin_one_ticker_upper +' balance is <strong><a href="asdf" class="exchange_balance">' + coin_one_balance + '</a></strong>.</div>\
     <div class="box options">\
                 <span class="label_style">Amount:</span> <input type="number" id="ask_quantity" name="amount" value="0.00000000" class="required"> ' + coin_one_ticker_upper + '<br>\
-                <span class="label_style">Price Per DOGE:</span> <input type="number" id="ask_price" name="price" value="' + pending_bids[0].price.toPrecision(9) + '" class="required"> ' + coin_two_ticker_upper + '<br>\
+                <span class="label_style">Price Per ' + coin_one_ticker_upper + ':</span> <input type="number" id="ask_price" name="price" value="' + pending_bids[0].price.toPrecision(9) + '" class="required"> ' + coin_two_ticker_upper + '<br>\
                 <span class="label_style">Total:</span> <span class="total" id="buy_total">' + pending_bids[0].price.toPrecision(9) + '</span> <br>\
                 <span class="label_style">Trading Fee:</span> <span class="fee" id="buy_fee">0.00000000</span> BTC (' + (10 * order_fee).toPrecision(2) +  '%)<br>\
                 <span class="label_style">Net Total:</span> <span class="netTotal" >' + pending_bids[0].price.toPrecision(9) + '</span> ' + coin_two_ticker_upper + 
@@ -901,10 +927,10 @@ $('.inner_content').append(string);
     $('#buy_order').click(function(){
       bid_quantity = $('#bid_quantity').val();
       bid_price = $('#bid_price').val();
-      coin_name_one = 'dogecoin';
-      coin_name_two = 'bitcoin';
-      coin_ticker_one = 'doge';
-      coin_ticker_two = 'btc';
+      coin_ticker_one = coin_one_ticker;
+      coin_ticker_two = coin_two_ticker;
+      coin_name_one = coin_one_name;
+      coin_name_two = coin_two_name;
       //alert(buy_amount);
 
       //alert(coin_ticker_one);
@@ -928,10 +954,11 @@ $('.inner_content').append(string);
     $('#ask_submit').click(function(){
       ask_quantity = $('#ask_quantity').val();
       ask_price = $('#ask_price').val();
-      coin_name_one = 'dogecoin';
-      coin_name_two = 'bitcoin';
-      coin_ticker_one = 'doge';
-      coin_ticker_two = 'btc';
+      coin_ticker_one = coin_one_ticker;
+      coin_ticker_two = coin_two_ticker;
+      coin_name_one = coin_one_name;
+      coin_name_two = coin_two_name;
+      //alert(buy_amount);
 
 
       $.ajax({
@@ -950,26 +977,6 @@ $('.inner_content').append(string);
 
 
 
-    $('#sell_order').click(function(){
-      sell_amount = $('#sell_amount').val();
-      sell_price = $('#sell_price').val();
-      coin_ticker_one = 'doge';
-      coin_ticker_two = 'btc';
-      //alert(buy_amount);
-
-
-      $.ajax({
-        url: "/sell_order",
-        type: "POST",
-        data: {sell_amount: sell_amount, sell_price: sell_price, coin_ticker_one: coin_ticker_one, coin_ticker_two: coin_ticker_two, _csrf: csrf },
-        dataType: "html"
-      }).done(function(data){
-
-        alert(data);
-
-      });
-
-    });
 
 
 
@@ -980,15 +987,14 @@ $('.inner_content').append(string);
   if (document.URL.indexOf('balances') != -1){
     
     $('#balances_li').attr('class', 'active');
-    //alert('test');
+
     array = new Array();
     array.push(data.bitcoin);
     array.push(data.dogecoin);
     array.push(data.litecoin);
-    array.push(data.vertcoin);
-    //alert(JSON.stringify(populated));
+
     array.sort(function(a,b){return a.coin_number - b.coin_number});
-    //alert(JSON.stringify(array));
+
 
 
     string = '<div class="tab_header">\
@@ -1114,7 +1120,7 @@ $('.withdraw_dropdown').click(function(){
 
 var id = $(this).attr('id');
 id = id.substr(9, id.length);
-test = 'http://localhost:8000/withdraw/' + id;
+test = prefix + 'withdraw/' + id;
 window.location = test;
 });
 
