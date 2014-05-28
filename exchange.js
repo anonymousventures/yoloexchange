@@ -1971,16 +1971,22 @@ console.log('shit has saved');
 
 });
 
-/*
+confirm_url = prefix + 'withdraw/confirm/' + token;
+
 sendgrid.send({
   to:       body.email,
-  from:     'info@cryptox.com',
-  subject:  'Hello World',
-  text:     activation_url
+  from:     'info@GenesisBlock.io',
+  subject:  'Confirm Withdrawal',
+  text:     confirm_url,
+  html: confirm_url
 }, function(err, json) {
   if (err) { return console.error(err); }
   console.log(json);
-  res.end("done"); */
+  res.end("done"); 
+
+
+}); 
+
 
 
 }); 
