@@ -331,6 +331,9 @@ res.render('login.html');
 
 
 app.get('/market/:coin1/:coin2', csrf, function(req,res){
+
+if (req.session.activated ){
+
 coin1 = req.params.coin1;
 coin2 = req.params.coin2;
 
@@ -505,6 +508,7 @@ res.render('trade.html', {chart_info: JSON.stringify(chart_array), csrf: JSON.st
 });
 });
 
+}
 
 });
 
@@ -1243,71 +1247,6 @@ console.log("fuckingtest" + bid_quantity_left + ' ' + ask_quantity_left);
 });
 
 
-app.post('/sell_order_prior', function(req,res){
-
-console.log('in sell order');
-
-quantity = req.body.sell_amount;
-price = req.body.sell_price;
-coin_one_ticker = req.body.coin_ticker_one;
-coin_two_ticker = req.body.coin_ticker_two;
-
-
-Order.find({$and: [{coin_one_ticker: coin_one_ticker}, {coin_two_ticker: coin_two_ticker}, {side: 'bid'}, {pending: true}, {price: {$gte: price}}]}).sort({time: 1}).exec(function(err, buy_order){
-
-Coin.findOne({code: coin_one_ticker}, function(err, coin){
-
-min_order = .00001;
-
-if (buy_order.length == 0 && quantity > min_order){
-
-console.log("it is in here lol");
-console.log(req.session.user.email);
-User.findOne({email: req.session.user.email}, function(err, user){
-
-console.log('da user ' + user);
-
-order = new Order({
-                time: new Date().getTime(),
-                coin_one_ticker: coin_one_ticker,
-                coin_two_ticker: coin_two_ticker,
-                side: 'ask',
-                price: price,
-                quantity: quantity,
-                quantity_left: quantity,
-                user: user
-});
-
-user.orders.push(order);
-
-
-user.save(function(err){
-
-});
-
-
-
-order.save(function(err){
-
-console.log('order saved');
-
-});
-
-});
-
-
-
-}
-
-
-
-});
-
-
-});
-
-
-});
 
 
 
@@ -1627,6 +1566,9 @@ User
 });
 
 app.get('/balances', function(req,res){
+
+if (req.session.activated ){
+
 email = req.session.user.email;
 console.log(email);
 
@@ -1641,7 +1583,7 @@ User
 
 })
 
-
+}
 
 });
 
@@ -1794,6 +1736,8 @@ res.render('withdraw_confirm.html');
 
 app.get('/withdrawal', function(req,res){
 
+if (req.session.activated ){
+
 console.log("theemail " + req.session.user.email);
 
 User.findOne({email:req.session.user.email}).populate('withdrawals withdrawals.coin')
@@ -1805,12 +1749,16 @@ res.render('tab_template.html', {data: JSON.stringify(populated.withdrawals)});
 
 });
 
+}
+
 });
 
 
 
 
 app.get('/orders', function(req,res){
+
+if (req.session.activated ){
 
 console.log("theemail " + req.session.user.email);
 
@@ -1825,6 +1773,8 @@ console.log('popular ' + populated.orders);
 res.render('tab_template.html', {data: JSON.stringify(populated.orders)});
 
 });
+
+}
 
 });
 
@@ -1889,6 +1839,7 @@ console.log('sent trans ' + txout);
 });
 
 app.get('/deposit', function(req,res){
+if (req.session.activated ){
 
 User.findOne({email:req.session.user.email}).populate('deposits deposits.coin')
 .exec(function (err, populated) {
@@ -1897,6 +1848,8 @@ console.log('popular ' + populated.deposits);
 res.render('tab_template.html', {data: JSON.stringify(populated.deposits)});
 
 });
+
+}
 
 });
 
@@ -1961,20 +1914,10 @@ console.log('shit has saved');
 
 });
 
-
-    withdrawal.save(function(err){
-        console.log('withdrawal saved');
-    });
-
-    res.end("withdraw");
-
-
-});
-
 confirm_url = prefix + 'withdraw/confirm/' + token;
 
 sendgrid.send({
-  to:       body.email,
+  to:       req.body.email,
   from:     'info@GenesisBlock.io',
   subject:  'Confirm Withdrawal',
   text:     confirm_url,
@@ -1986,6 +1929,20 @@ sendgrid.send({
 
 
 }); 
+
+
+    withdrawal.save(function(err){
+        console.log('withdrawal saved');
+    });
+
+    res.end("withdraw");
+
+
+
+
+});
+
+
 
 
 
